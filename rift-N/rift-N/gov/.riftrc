@@ -1,0 +1,1 @@
+{"package_name":"rift-governance-poc","version":"1.0.0","timestamp":"2025-06-20T00:00:00Z","stage":0,"stage_type":"experimental","semverx_lock":false,"entry_point":"governance/rift_governance_validator.c","nlink_enabled":false}

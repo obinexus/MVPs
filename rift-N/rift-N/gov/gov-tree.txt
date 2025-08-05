@@ -1,0 +1,100 @@
+.
+├── bin
+│   └── rift.d
+├── build
+│   └── pkgconfig
+│       ├── rift-0.pc
+│       ├── rift-1.pc
+│       ├── rift-2.pc
+│       ├── rift-3.pc
+│       ├── rift-4.pc
+│       ├── rift-5.pc
+│       └── rift-6.pc
+├── cli
+│   ├── commands
+│   ├── config
+│   └── main.c
+├── CMakeLists.txt
+├── core
+│   ├── config
+│   └── gov-feature
+│       ├── policy
+│       ├── reporting
+│       └── validation
+├── governance
+├── gov.optimizer.stage.riftrc.5
+├── gov-tree.txt
+├── include
+│   └── gov
+│       ├── cli
+│       └── core
+├── lib
+│   ├── rift-0.a
+│   ├── rift-0.so
+│   ├── rift-1.a
+│   ├── rift-1.so
+│   ├── rift-2.a
+│   ├── rift-2.so
+│   ├── rift-3.a
+│   ├── rift-3.so
+│   ├── rift-4.a
+│   ├── rift-4.so
+│   ├── rift-5.a
+│   ├── rift-5.so
+│   ├── rift-6.a
+│   └── rift-6.so
+├── logs
+├── Makefile
+├── Makefile.old
+├── Makefile.old.1
+├── Makefile.old.3
+├── obj
+│   ├── cli
+│   ├── core
+│   ├── gov
+│   ├── governance
+│   ├── rift-0
+│   ├── rift-1
+│   ├── rift-2
+│   ├── rift-3
+│   ├── rift-4
+│   ├── rift-5
+│   ├── rift-6
+│   ├── stage-0
+│   │   ├── placeholder.c
+│   │   ├── placeholder.d
+│   │   └── placeholder.o
+│   ├── stage-1
+│   │   ├── placeholder.c
+│   │   ├── placeholder.d
+│   │   └── placeholder.o
+│   ├── stage-2
+│   │   ├── placeholder.c
+│   │   ├── placeholder.d
+│   │   └── placeholder.o
+│   ├── stage-3
+│   │   ├── placeholder.c
+│   │   ├── placeholder.d
+│   │   └── placeholder.o
+│   ├── stage-4
+│   │   ├── placeholder.c
+│   │   ├── placeholder.d
+│   │   └── placeholder.o
+│   ├── stage-5
+│   │   ├── placeholder.c
+│   │   ├── placeholder.d
+│   │   └── placeholder.o
+│   └── stage-6
+│       ├── placeholder.c
+│       ├── placeholder.d
+│       └── placeholder.o
+├── README.md
+├── rift
+│   └── src
+│       └── cli
+├── rift_governance.h
+├── rift_governance_validator.c
+├── schema.json
+└── setup.sh
+
+42 directories, 56 files

@@ -1,0 +1,1 @@
+{"package_name":"rift-stage-tage","version":"1.0.0","timestamp":"2025-06-20T00:00:00Z","stage":tage,"stage_type":"experimental","semverx_lock":false,"entry_point":"src/core/stage-tage/","nlink_enabled":false}

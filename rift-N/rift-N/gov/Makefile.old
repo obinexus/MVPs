@@ -1,0 +1,302 @@
+# =================================================================
+# RIFT Governance-Integrated Makefile - AEGIS Methodology Compliance
+# OBINexus Computing Framework - Technical Implementation
+# Systematic Phase-Gated Build Process with Governance Validation
+# =================================================================
+
+# Configuration Variables - AEGIS Standards
+RIFT_VERSION := 1.6.0
+AEGIS_COMPLIANCE := ENABLED
+GOVERNANCE_VALIDATION := ENABLED
+SEMVERX_STRICT_MODE := ON
+
+# Build Tools Configuration
+CC := gcc
+CXX := g++
+CMAKE := cmake
+MAKE := make
+PKG_CONFIG := pkg-config
+AR := ar
+
+# Platform Detection
+UNAME_S := $(shell uname -s)
+UNAME_M := $(shell uname -m)
+
+ifeq ($(UNAME_S),Linux)
+    PLATFORM := linux
+    NPROC := $(shell nproc)
+    PKG_CONFIG_INSTALL_DIR := /usr/local/lib/pkgconfig
+endif
+
+ifeq ($(findstring MINGW,$(UNAME_S)),MINGW)
+    PLATFORM := windows
+    NPROC := $(shell nproc 2>/dev/null || echo 4)
+    PKG_CONFIG_INSTALL_DIR := /mingw64/lib/pkgconfig
+    EXE_EXT := .exe
+endif
+
+# Directory Structure
+RIFT_ROOT := $(shell pwd)
+BUILD_DIR := $(RIFT_ROOT)/build
+SRC_DIR := $(RIFT_ROOT)/rift/src
+INCLUDE_DIR := $(RIFT_ROOT)/rift/include
+LIB_DIR := $(RIFT_ROOT)/lib
+BIN_DIR := $(RIFT_ROOT)/bin
+OBJ_DIR := $(RIFT_ROOT)/obj
+LOGS_DIR := $(RIFT_ROOT)/logs
+GOVERNANCE_DIR := $(RIFT_ROOT)/governance
+
+# Governance Validator Configuration
+GOVERNANCE_VALIDATOR := $(BIN_DIR)/rift_governance_validator$(EXE_EXT)
+GOVERNANCE_SOURCES := governance/rift_governance_validator.c
+GOVERNANCE_HEADERS := governance/rift_governance.h
+
+# AEGIS Compliance Flags
+CFLAGS := -std=c11 -Wall -Wextra -Wpedantic -Werror -O2 -MMD -MP
+CFLAGS += -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fPIE
+CFLAGS += -DRIFT_VERSION_STRING=\"$(RIFT_VERSION)\"
+CFLAGS += -DRIFT_AEGIS_COMPLIANCE=1 -DRIFT_ZERO_TRUST=1
+CFLAGS += -I$(INCLUDE_DIR) -I$(INCLUDE_DIR)/rift/core
+
+# Library Dependencies for Governance Validator
+GOVERNANCE_LIBS := $(shell pkg-config --libs libcjson openssl)
+GOVERNANCE_CFLAGS := $(shell pkg-config --cflags libcjson openssl)
+
+LDFLAGS := -Wl,-z,relro -Wl,-z,now -pie
+LIBS := -lssl -lcrypto -lpthread
+
+# Color Codes for Professional Output
+GREEN := \033[0;32m
+BLUE := \033[0;34m
+YELLOW := \033[1;33m
+RED := \033[0;31m
+MAGENTA := \033[0;35m
+CYAN := \033[0;36m
+BOLD := \033[1m
+NC := \033[0m
+
+# Stage Configuration Matrix
+STAGES := 0 1 2 3 4 5 6
+STAGE_NAMES := tokenizer parser semantic validator bytecode optimizer emitter
+STAGE_LIBS := $(addprefix $(LIB_DIR)/,$(addsuffix .a,rift-0 rift-1 rift-2 rift-3 rift-4 rift-5 rift-6))
+STAGE_EXECUTABLES := $(addprefix $(BIN_DIR)/,$(addsuffix $(EXE_EXT),rift-0 rift-1 rift-2 rift-3 rift-4 rift-5 rift-6))
+
+# =================================================================
+# PHASE GATE DEFINITIONS - AEGIS WATERFALL METHODOLOGY
+# =================================================================
+
+.PHONY: phase-gate-1 phase-gate-2 phase-gate-3 phase-gate-4 phase-gate-5
+
+# Phase Gate 1: Requirements Validation and Dependency Check
+phase-gate-1: banner
+	@echo -e "$(BLUE)[PHASE GATE 1]$(NC) Requirements Validation and Dependency Check"
+	@echo -e "$(BLUE)[REQUIREMENTS]$(NC) Validating build environment..."
+	@which $(CC) > /dev/null || (echo -e "$(RED)[FATAL]$(NC) C compiler not found" && exit 1)
+	@which pkg-config > /dev/null || (echo -e "$(RED)[FATAL]$(NC) pkg-config not found" && exit 1)
+	@pkg-config --exists libcjson || (echo -e "$(RED)[FATAL]$(NC) libcjson not found" && exit 1)
+	@pkg-config --exists openssl || (echo -e "$(RED)[FATAL]$(NC) OpenSSL not found" && exit 1)
+	@echo -e "$(GREEN)[PHASE GATE 1]$(NC) Requirements validation passed"
+	@touch $(LOGS_DIR)/phase_gate_1_passed.marker
+
+# Phase Gate 2: Governance Structure Validation
+phase-gate-2: phase-gate-1
+	@echo -e "$(BLUE)[PHASE GATE 2]$(NC) Governance Structure Validation"
+	@echo -e "$(BLUE)[GOVERNANCE]$(NC) Validating project governance structure..."
+	@test -f .riftrc || (echo -e "$(RED)[FATAL]$(NC) Missing primary .riftrc file" && exit 1)
+	@echo -e "$(BLUE)[GOVERNANCE]$(NC) Checking stage-specific governance files..."
+	@for stage in $(STAGES); do \
+		if [ ! -f .riftrc.$$stage ]; then \
+			echo -e "$(YELLOW)[WARNING]$(NC) Missing .riftrc.$$stage file"; \
+		fi; \
+	done
+	@echo -e "$(GREEN)[PHASE GATE 2]$(NC) Governance structure validation passed"
+	@touch $(LOGS_DIR)/phase_gate_2_passed.marker
+
+# Phase Gate 3: Governance Validator Build
+phase-gate-3: phase-gate-2 $(GOVERNANCE_VALIDATOR)
+	@echo -e "$(BLUE)[PHASE GATE 3]$(NC) Governance Validator Build and Validation"
+	@echo -e "$(BLUE)[BUILD]$(NC) Governance validator compilation completed"
+	@echo -e "$(BLUE)[VALIDATION]$(NC) Running preliminary governance validation..."
+	@$(GOVERNANCE_VALIDATOR) $(RIFT_ROOT) --verbose > $(LOGS_DIR)/governance_validation_preliminary.log 2>&1 || \
+		(echo -e "$(RED)[FATAL]$(NC) Preliminary governance validation failed" && cat $(LOGS_DIR)/governance_validation_preliminary.log && exit 1)
+	@echo -e "$(GREEN)[PHASE GATE 3]$(NC) Governance validation passed"
+	@touch $(LOGS_DIR)/phase_gate_3_passed.marker
+
+# Phase Gate 4: SemVerX and NLink Integration Validation
+phase-gate-4: phase-gate-3
+	@echo -e "$(BLUE)[PHASE GATE 4]$(NC) SemVerX and NLink Integration Validation"
+	@echo -e "$(BLUE)[SEMVERX]$(NC) Validating SemVerX compliance..."
+	@if which nlink > /dev/null 2>&1; then \
+		echo -e "$(BLUE)[NLINK]$(NC) Running NLink SemVerX validation..."; \
+		nlink --semverx-validate --project-root $(RIFT_ROOT) || \
+			(echo -e "$(RED)[FATAL]$(NC) NLink SemVerX validation failed" && exit 1); \
+	else \
+		echo -e "$(YELLOW)[WARNING]$(NC) NLink not available - skipping SemVerX validation"; \
+	fi
+	@echo -e "$(GREEN)[PHASE GATE 4]$(NC) SemVerX integration validation passed"
+	@touch $(LOGS_DIR)/phase_gate_4_passed.marker
+
+# Phase Gate 5: Complete Pipeline Validation
+phase-gate-5: phase-gate-4
+	@echo -e "$(BLUE)[PHASE GATE 5]$(NC) Complete Pipeline Validation"
+	@echo -e "$(BLUE)[PIPELINE]$(NC) Running comprehensive governance validation..."
+	@$(GOVERNANCE_VALIDATOR) $(RIFT_ROOT) --strict --verbose > $(LOGS_DIR)/governance_validation_complete.log 2>&1 || \
+		(echo -e "$(RED)[FATAL]$(NC) Complete pipeline validation failed" && cat $(LOGS_DIR)/governance_validation_complete.log && exit 1)
+	@echo -e "$(GREEN)[PHASE GATE 5]$(NC) Complete pipeline validation passed"
+	@touch $(LOGS_DIR)/phase_gate_5_passed.marker
+
+# =================================================================
+# PRIMARY TARGETS WITH GOVERNANCE INTEGRATION
+# =================================================================
+
+.PHONY: all governance-validated-build setup clean validate-governance
+
+all: banner setup governance-validated-build validate
+
+governance-validated-build: phase-gate-5 direct-build
+
+setup: banner setup-directories
+
+# Governance Validator Target
+$(GOVERNANCE_VALIDATOR): $(GOVERNANCE_SOURCES) $(GOVERNANCE_HEADERS) | setup-directories
+	@echo -e "$(BLUE)[GOVERNANCE]$(NC) Building governance validator..."
+	@$(CC) $(CFLAGS) $(GOVERNANCE_CFLAGS) -o $@ $(GOVERNANCE_SOURCES) $(GOVERNANCE_LIBS)
+	@echo -e "$(GREEN)[GOVERNANCE]$(NC) Governance validator built successfully"
+
+# Systematic Directory Setup
+setup-directories:
+	@echo -e "$(BLUE)[SETUP]$(NC) Creating systematic directory structure..."
+	@mkdir -p $(BUILD_DIR) $(LIB_DIR) $(BIN_DIR) $(OBJ_DIR) $(LOGS_DIR)
+	@mkdir -p $(GOVERNANCE_DIR)
+	@for stage in $(STAGES); do \
+		mkdir -p $(OBJ_DIR)/rift-$$stage; \
+		mkdir -p $(OBJ_DIR)/stage-$$stage; \
+	done
+	@echo -e "$(GREEN)[SETUP]$(NC) Directory structure created"
+
+# Direct Build (Original RIFT Build Process)
+direct-build: setup $(STAGE_LIBS) $(STAGE_EXECUTABLES) unified-cli
+
+# Stage Library Targets (Unchanged from Original)
+$(LIB_DIR)/rift-%.a: $(OBJ_DIR)/stage-%
+	@echo -e "$(BLUE)[STAGE $*]$(NC) Creating stage library..."
+	@find $(OBJ_DIR)/stage-$* -name "*.o" -exec $(AR) rcs $@ {} +
+	@echo -e "$(GREEN)[STAGE $*]$(NC) Library rift-$*.a created"
+
+# Stage Object Compilation
+$(OBJ_DIR)/stage-%/%.o: $(SRC_DIR)/core/stage-%/%.c
+	@echo -e "$(BLUE)[COMPILE]$(NC) Stage $* source: $<"
+	@$(CC) $(CFLAGS) -c $< -o $@
+
+# Unified CLI Target
+unified-cli: $(BIN_DIR)/rift$(EXE_EXT)
+
+$(BIN_DIR)/rift$(EXE_EXT): $(STAGE_LIBS)
+	@echo -e "$(BLUE)[CLI]$(NC) Building unified RIFT CLI..."
+	@$(CC) $(CFLAGS) -o $@ $(SRC_DIR)/cli/main.c $(LDFLAGS) -L$(LIB_DIR) \
+		-lrift-0 -lrift-1 -lrift-2 -lrift-3 -lrift-4 -lrift-5 -lrift-6 $(LIBS)
+	@echo -e "$(GREEN)[CLI]$(NC) Unified CLI rift$(EXE_EXT) created"
+
+# =================================================================
+# GOVERNANCE VALIDATION TARGETS
+# =================================================================
+
+# Primary Governance Validation
+validate-governance: $(GOVERNANCE_VALIDATOR)
+	@echo -e "$(BLUE)[VALIDATION]$(NC) Running governance validation..."
+	@$(GOVERNANCE_VALIDATOR) $(RIFT_ROOT) --verbose
+	@echo -e "$(GREEN)[VALIDATION]$(NC) Governance validation completed"
+
+# Strict Governance Validation
+validate-governance-strict: $(GOVERNANCE_VALIDATOR)
+	@echo -e "$(BLUE)[VALIDATION]$(NC) Running strict governance validation..."
+	@$(GOVERNANCE_VALIDATOR) $(RIFT_ROOT) --strict --verbose
+	@echo -e "$(GREEN)[VALIDATION]$(NC) Strict governance validation completed"
+
+# Stage-Specific Validation
+validate-stage-%: $(GOVERNANCE_VALIDATOR)
+	@echo -e "$(BLUE)[STAGE $*]$(NC) Validating stage $* governance..."
+	@test -f .riftrc.$* || (echo -e "$(RED)[FATAL]$(NC) Missing .riftrc.$* file" && exit 1)
+	@echo -e "$(GREEN)[STAGE $*]$(NC) Stage $* governance validation passed"
+
+# =================================================================
+# QUALITY ASSURANCE AND TESTING
+# =================================================================
+
+# QA Validation Framework
+qa-governance: $(GOVERNANCE_VALIDATOR)
+	@echo -e "$(BLUE)[QA]$(NC) Comprehensive governance quality assurance..."
+	@$(GOVERNANCE_VALIDATOR) $(RIFT_ROOT) --strict --verbose > $(LOGS_DIR)/qa_governance.log 2>&1
+	@echo -e "$(GREEN)[QA]$(NC) Governance QA completed successfully"
+
+# Testing Target
+test-governance: $(GOVERNANCE_VALIDATOR)
+	@echo -e "$(BLUE)[TEST]$(NC) Running governance validation test suite..."
+	@for stage in $(STAGES); do \
+		echo -e "$(BLUE)[TEST STAGE $$stage]$(NC) Testing stage $$stage governance..."; \
+		$(MAKE) validate-stage-$$stage; \
+	done
+	@echo -e "$(GREEN)[TEST]$(NC) All governance tests passed"
+
+# =================================================================
+# MAINTENANCE AND UTILITY TARGETS
+# =================================================================
+
+# Clean Target
+clean: banner
+	@echo -e "$(BLUE)[CLEAN]$(NC) Removing build artifacts..."
+	@rm -rf $(BUILD_DIR) $(OBJ_DIR)
+	@rm -f $(LIB_DIR)/*.a $(BIN_DIR)/*$(EXE_EXT)
+	@rm -f $(GOVERNANCE_VALIDATOR)
+	@find . -name "*.d" -delete
+	@rm -f $(LOGS_DIR)/phase_gate_*.marker
+	@echo -e "$(GREEN)[CLEAN]$(NC) Build artifacts removed"
+
+# Validate Target (Comprehensive)
+validate: validate-governance qa-governance test-governance
+	@echo -e "$(GREEN)[VALIDATE]$(NC) Complete validation suite passed"
+
+# Banner
+banner:
+	@echo -e "$(BOLD)$(BLUE)"
+	@echo "======================================================================"
+	@echo "RIFT Compiler with AEGIS Governance Validation Framework"
+	@echo "OBINexus Computing - Systematic Waterfall Development"
+	@echo "Version: $(RIFT_VERSION) | AEGIS Compliance: $(AEGIS_COMPLIANCE)"
+	@echo "======================================================================"
+	@echo -e "$(NC)"
+
+# Help Target
+help:
+	@echo "RIFT AEGIS Makefile - Available Targets:"
+	@echo ""
+	@echo "  Primary Targets:"
+	@echo "    all                     - Complete build with governance validation"
+	@echo "    governance-validated-build - Phase-gated build with full validation"
+	@echo "    clean                   - Remove all build artifacts"
+	@echo ""
+	@echo "  Phase Gates (Waterfall Methodology):"
+	@echo "    phase-gate-1           - Requirements and dependency validation"
+	@echo "    phase-gate-2           - Governance structure validation"
+	@echo "    phase-gate-3           - Governance validator build and test"
+	@echo "    phase-gate-4           - SemVerX and NLink integration validation"
+	@echo "    phase-gate-5           - Complete pipeline validation"
+	@echo ""
+	@echo "  Governance Validation:"
+	@echo "    validate-governance     - Run governance validation"
+	@echo "    validate-governance-strict - Run strict governance validation"
+	@echo "    validate-stage-N       - Validate specific stage (N=0-6)"
+	@echo ""
+	@echo "  Quality Assurance:"
+	@echo "    qa-governance          - Comprehensive governance QA"
+	@echo "    test-governance        - Run governance test suite"
+	@echo "    validate               - Complete validation suite"
+	@echo ""
+
+# Include dependency files
+-include $(OBJ_DIR)/*/*.d
+
+# Mark targets as phony
+.PHONY: banner help all setup clean validate direct-build unified-cli
+.PHONY: governance-validated-build validate-governance validate-governance-strict
+.PHONY: qa-governance test-governance
