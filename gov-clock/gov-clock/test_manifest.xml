@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dop:dop_manifest xmlns:dop="http://obinexus.org/dop/schema"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://obinexus.org/dop/schema obinexus_dop_manifest.xsd">
+
+  <dop:manifest_metadata>
+    <dop:manifest_version>1.0.0</dop:manifest_version>
+    <dop:build_timestamp>2025-07-20T12:00:00Z</dop:build_timestamp>
+    <dop:target_name>test_manifest</dop:target_name>
+    <dop:build_system>makefile</dop:build_system>
+    <dop:validation_level>bidirectional</dop:validation_level>
+  </dop:manifest_metadata>
+
+  <dop:build_topology>
+    <dop:topology_type>P2P</dop:topology_type>
+    <dop:fault_tolerance>true</dop:fault_tolerance>
+    <dop:p2p_enabled>true</dop:p2p_enabled>
+    <dop:max_nodes>0</dop:max_nodes>
+    <dop:nodes>
+    </dop:nodes>
+  </dop:build_topology>
+
+  <dop:component_validation>
+    <dop:dop_principles_enforced>true</dop:dop_principles_enforced>
+    <dop:immutability_verified>true</dop:immutability_verified>
+    <dop:data_logic_separation_verified>true</dop:data_logic_separation_verified>
+    <dop:transparency_verified>true</dop:transparency_verified>
+    <dop:isolation_boundaries>
+      <dop:memory_isolation>true</dop:memory_isolation>
+      <dop:process_isolation>true</dop:process_isolation>
+      <dop:network_isolation>false</dop:network_isolation>
+      <dop:file_system_isolation>false</dop:file_system_isolation>
+    </dop:isolation_boundaries>
+  </dop:component_validation>
+
+  <dop:cryptographic_verification>
+    <dop:integrity_algorithm>SHA256</dop:integrity_algorithm>
+    <dop:signature_algorithm>RSA_PSS</dop:signature_algorithm>
+    <dop:verification_chain>
+      <dop:verification_step>
+        <dop:step_name>topology_integrity</dop:step_name>
+        <dop:verification_method>node_validation</dop:verification_method>
+        <dop:expected_result>pass</dop:expected_result>
+      </dop:verification_step>
+    </dop:verification_chain>
+  </dop:cryptographic_verification>
+
+</dop:dop_manifest>

@@ -1,0 +1,19 @@
+us@OBINexusPC:~/obinexus/pkg/gov-clock$ ls
+ build
+ CMakeLists.txt
+ CMakeLists.txt.old
+ docs
+ examples
+ gov_clock_readme.md
+ include
+'(isolated)'
+ keys
+ Makefile
+ Makefile.backup
+ Makefile.old
+ Makefile.old2
+ obinexus_cmake_build_system.md
+ README.md
+ schemas
+ src
+(base) obinexus@OBINexusPC:~/obinexus/pkg/gov-clock$ c
