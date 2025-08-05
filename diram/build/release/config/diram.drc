@@ -1,0 +1,4 @@
+# DIRAM Configuration
+version=1271569
+sinphase_threshold=0.5
+governance_level=standard
