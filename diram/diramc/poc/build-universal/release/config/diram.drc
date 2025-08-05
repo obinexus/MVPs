@@ -1,0 +1,58 @@
+# DIRAM Configuration File
+# OBINexus Project - Directed Instruction RAM
+# This file demonstrates the configuration layer for memory isolation
+# .dramrc configuration with async settings
+
+# Memory Configuration
+# Allocate specific amount of RAM for isolated user space
+memory_limit=6144      # 6GB in MB
+memory_space=userspace # Named memory space identifier
+
+# Tracing Configuration
+trace=true             # Enable SHA-256 receipt generation for allocations
+
+# Logging Configuration
+log_dir=logs          # Directory for detached mode logs
+
+# Heap Constraint Configuration (Sinphasé Governance)
+# ε(x) ≤ 0.6 constraint enforced at runtime
+max_heap_events=3     # Maximum allocations per command epoch
+
+# Process Isolation Settings
+detach_timeout=30     # Seconds before detached process self-terminates
+pid_binding=strict    # Enforce strict PID binding for fork safety
+
+# Memory Protection Flags
+guard_pages=true      # Enable guard pages for boundary protection
+canary_values=true    # Enable canary values for overflow detection
+aslr_enabled=true     # Address Space Layout Randomization
+
+# Telemetry Configuration
+telemetry_level=2     # 0=disabled, 1=system, 2=opcode-bound
+telemetry_endpoint=/var/run/diram/telemetry.sock
+
+# Zero-Trust Memory Policy
+zero_trust=true       # Enable zero-trust memory boundaries
+memory_audit=true     # Enable memory audit trail
+
+[async]
+enable_promises = true
+default_timeout_ms = 10000
+max_pending_promises = 100
+lookahead_cache_size = 1024
+
+[detach]
+enable_detach_mode = true
+log_async_operations = true
+persist_promise_receipts = true
+
+[resilience]
+retry_on_transient_failure = true
+max_retry_attempts = 3
+exponential_backoff = true
+# Configuration Loading Hierarchy (in order):
+# 1. System-wide: /etc/diram/config.dram
+# 2. User home: ~/.dramrc
+# 3. Project local: ./.dramrc
+# 4. Command line: -c <file>
+# 5. Environment: DIRAM_CONFIG=<file>

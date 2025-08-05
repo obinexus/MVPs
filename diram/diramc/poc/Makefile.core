@@ -1,0 +1,36 @@
+# DIRAM Core Library Components
+# Builds core object files
+
+# Get configuration
+include Makefile.config
+
+# Core sources
+CORE_SRCS = \
+    $(SRC_DIR)/core/feature-alloc/alloc.c \
+    $(SRC_DIR)/core/feature-alloc/feature_alloc.c \
+    $(SRC_DIR)/core/feature-alloc/async_promise.c \
+    $(SRC_DIR)/core/feature-alloc/cache_lookahead.c \
+    $(SRC_DIR)/core/config/config.c
+
+# Object files
+CORE_OBJS = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(CORE_SRCS))
+
+# Build core objects only
+core: core-directories $(CORE_OBJS)
+	@echo "[CORE] Core objects built"
+
+core-directories:
+	@mkdir -p $(OBJ_DIR)/core/feature-alloc
+	@mkdir -p $(OBJ_DIR)/core/config
+	@mkdir -p logs
+
+# Pattern rules
+$(OBJ_DIR)/core/%.o: $(SRC_DIR)/core/%.c
+	@echo "[CC CORE] $<"
+	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+clean:
+	@echo "[CLEAN] Core components"
+	@rm -f $(CORE_OBJS)
+
+.PHONY: core core-directories clean

@@ -1,0 +1,45 @@
+# DIRAM Shared Utilities and Helpers
+
+# Get configuration
+include Makefile.config
+
+# Installation paths
+PREFIX ?= /usr/local
+
+install: all
+	@echo "[INSTALL] Installing DIRAM to $(PREFIX)"
+	@install -d $(PREFIX)/bin
+	@install -d $(PREFIX)/lib
+	@install -d $(PREFIX)/include/diram
+	@install -m 755 $(BIN_DIR)/diram $(PREFIX)/bin/
+	@install -m 644 $(LIB_DIR)/lib$(DIRAM_LIB_NAME).* $(PREFIX)/lib/
+	@cp -r $(INCLUDE_DIR)/diram/* $(PREFIX)/include/diram/
+	@ldconfig $(PREFIX)/lib 2>/dev/null || true
+
+test: all
+	@echo "[TEST] Running DIRAM tests..."
+	@LD_LIBRARY_PATH=$(LIB_DIR) $(BIN_DIR)/diram --test
+
+help:
+	@echo "DIRAM Modular Build System"
+	@echo "=========================="
+	@echo "Usage: make [target]"
+	@echo ""
+	@echo "Targets:"
+	@echo "  all      - Build everything"
+	@echo "  core     - Build core components only"
+	@echo "  hotwire  - Build hotwire + create libraries"
+	@echo "  cli      - Build CLI executable"
+	@echo "  clean    - Clean all build artifacts"
+	@echo "  install  - Install to system (PREFIX=$(PREFIX))"
+	@echo "  test     - Run tests"
+	@echo ""
+	@echo "Libraries created:"
+	@echo "  lib$(DIRAM_LIB_NAME).a   - Static library"
+	@echo "  lib$(DIRAM_LIB_NAME).so  - Shared library"
+	@echo ""
+	@echo "Build modes:"
+	@echo "  make DEBUG=1  - Debug build"
+	@echo "  make DEBUG=0  - Release build (default)"
+
+.PHONY: install test help
