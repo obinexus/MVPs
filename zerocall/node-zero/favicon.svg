@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+  <!-- Background -->
+  <rect width="500" height="500" fill="#2A2D34" />
+  
+  <!-- Shield Outer Border -->
+  <path d="M250 80 L100 150 L100 300 L250 420 L400 300 L400 150 Z" fill="#202329" stroke="#303540" stroke-width="8" />
+  
+  <!-- Shield Inner Border -->
+  <path d="M250 100 L120 160 L120 290 L250 390 L380 290 L380 160 Z" fill="#303540" stroke="#E8E6D9" stroke-width="10" />
+  
+  <!-- Circuit Board Background -->
+  <path d="M250 120 L140 170 L140 280 L250 370 L360 280 L360 170 Z" fill="#2A2D34" />
+  
+  <!-- Circuit Lines -->
+  <path d="M170 210 L210 210" stroke="#E8E6D9" stroke-width="5" stroke-linecap="round" />
+  <path d="M290 210 L330 210" stroke="#E8E6D9" stroke-width="5" stroke-linecap="round" />
+  <path d="M250 265 L250 310" stroke="#E8E6D9" stroke-width="5" stroke-linecap="round" />
+  <path d="M230 310 L270 310" stroke="#E8E6D9" stroke-width="5" stroke-linecap="round" />
+  <path d="M210 310 L210 350" stroke="#E8E6D9" stroke-width="5" stroke-linecap="round" />
+  <path d="M250 310 L250 350" stroke="#E8E6D9" stroke-width="5" stroke-linecap="round" />
+  <path d="M290 310 L290 350" stroke="#E8E6D9" stroke-width="5" stroke-linecap="round" />
+  
+  <!-- Connection Nodes -->
+  <circle cx="170" cy="210" r="8" fill="#E8E6D9" />
+  <circle cx="170" cy="240" r="8" fill="#E8E6D9" />
+  <circle cx="170" cy="270" r="8" fill="#E8E6D9" />
+  <circle cx="330" cy="210" r="8" fill="#E8E6D9" />
+  <circle cx="330" cy="240" r="8" fill="#E8E6D9" />
+  <circle cx="330" cy="270" r="8" fill="#E8E6D9" />
+  <circle cx="210" cy="350" r="8" fill="#E8E6D9" />
+  <circle cx="250" cy="350" r="8" fill="#E8E6D9" />
+  <circle cx="290" cy="350" r="8" fill="#E8E6D9" />
+  
+  <!-- Circuit Connections -->
+  <path d="M170 210 L170 270" stroke="#E8E6D9" stroke-width="5" stroke-linecap="round" />
+  <path d="M330 210 L330 270" stroke="#E8E6D9" stroke-width="5" stroke-linecap="round" />
+  
+  <!-- Shield Bolts -->
+  <circle cx="140" cy="170" r="8" fill="#0E86CA" stroke="#E8E6D9" stroke-width="3" />
+  <circle cx="250" cy="120" r="8" fill="#0E86CA" stroke="#E8E6D9" stroke-width="3" />
+  <circle cx="360" cy="170" r="8" fill="#0E86CA" stroke="#E8E6D9" stroke-width="3" />
+  
+  <!-- Lock Outer Circle -->
+  <circle cx="250" cy="210" r="60" fill="none" stroke="#E8E6D9" stroke-width="10" />
+  
+  <!-- Lock Body -->
+  <path d="M220 190 L280 190 L280 250 L220 250 Z" fill="#2A2D34" stroke="#E8E6D9" stroke-width="8" rx="5" ry="5" />
+  
+  <!-- Lock Shackle -->
+  <path d="M230 190 C230 170 270 170 270 190" fill="none" stroke="#E8E6D9" stroke-width="10" stroke-linecap="round" />
+  
+  <!-- Lock Inner Circle -->
+  <circle cx="250" cy="220" r="25" fill="#2A2D34" stroke="#0E86CA" stroke-width="5" />
+  
+  <!-- Keyhole -->
+  <path d="M250 235 L250 225 C243 225 243 215 250 215 C257 215 257 225 250 225" fill="#0E86CA" />
+  
+  <!-- NODE-ZERO Text -->
+  <text x="250" y="450" font-family="Arial, sans-serif" font-size="45" font-weight="bold" fill="#E8E6D9" text-anchor="middle">NODE-ZERO</text>
+  
+  <!-- Zero-Knowledge Proofs Text -->
+  <text x="250" y="480" font-family="Arial, sans-serif" font-size="18" font-weight="normal" fill="#E8E6D9" text-anchor="middle">&amp; ZERO-KNOWLEDGE PROOFS</text>
+</svg>

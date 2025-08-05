@@ -1,0 +1,45 @@
+# Source code
+src/
+examples/
+test/
+
+# Configuration files
+.eslintrc.js
+.prettierrc
+.gitignore
+.github/
+.vscode/
+.husky/
+tsconfig.json
+jest.config.js
+
+# Documentation source
+docs/examples/
+docs/diagrams/
+
+# Test files
+**/*.test.ts
+**/__tests__/
+coverage/
+.nyc_output/
+
+# Temporary files
+tmp/
+temp/
+
+# Logs
+logs/
+*.log
+
+# Development tools
+.DS_Store
+.editorconfig
+.travis.yml
+.circleci/
+
+# Miscellaneous
+.git/
+*.tgz
+.npmrc
+.eslintcache
+.github

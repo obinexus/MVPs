@@ -1,0 +1,133 @@
+{
+  "name": "@obinexuscomputing/zero",
+  "version": "0.1.0",
+  "description": "A TypeScript implementation of Zero-Knowledge Proofs for Node.js",
+  "publishConfig": {
+    "registry": "https://r.privjs.com"
+  },
+  "type": "module",
+  "main": "dist/esm/index.js",
+  "types": "dist/esm/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "types": "./dist/esm/types/index.d.ts"
+    },
+    "./cli": {
+      "import": "./dist/cli/cli.js",
+      "require": "./dist/cli/cli.js",
+      "types": "./dist/cli/types/cli.d.ts"
+    }
+  },
+  "bin": {
+    "zero": "./bin/zero.js"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+
+    "build": "npm run clean && npm run build:esm && npm run build:cjs && npm run build:cli && npm run build:bin",
+    "build:esm": "rollup -c --environment FORMAT:esm",
+    "build:cjs": "rollup -c --environment FORMAT:cjs",
+    "build:cli": "rollup -c --environment FORMAT:cli",
+    "build:bin": "node scripts/create-bin.cjs",
+    "build:watch": "rollup -c -w --environment FORMAT:esm",
+    "clean": "rimraf dist bin",
+    "lint": "eslint 'src/**/*.ts'",
+    "lint:fix": "eslint 'src/**/*.ts' --fix",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watch",
+    "test:coverage": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
+    "test:ci": "NODE_OPTIONS=--experimental-vm-modules jest --ci --coverage",
+    "test:unit": "NODE_OPTIONS=--experimental-vm-modules jest __tests__/unit",
+    "test:integration": "NODE_OPTIONS=--experimental-vm-modules jest __tests__/integration",
+    "prepublishOnly": "npm run build",
+    "prepare": "husky install",
+    "docs": "typedoc --out docs/api src/index.ts"
+  },
+  "keywords": [
+    "zero-knowledge",
+    "zkp",
+    "cryptography",
+    "authentication",
+    "privacy",
+    "security",
+    "identity"
+  ],
+  "author": "OBINexus Computing",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/obinexuscomputing/node-zero.git"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-alias": "^5.0.0",
+    "@rollup/plugin-commonjs": "^25.0.0",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.0",
+    "@rollup/plugin-typescript": "^11.0.0",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@types/jest": "^29.5.0",
+    "@types/node": "^18.15.0",
+    "@typescript-eslint/eslint-plugin": "^5.60.0",
+    "@typescript-eslint/parser": "^5.60.0",
+    "eslint": "^8.40.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.3",
+    "jest": "^29.5.0",
+    "prettier": "^2.8.4",
+    "rimraf": "^4.1.2",
+    "rollup": "^4.0.0",
+    "ts-jest": "^29.0.5",
+    "ts-node": "^10.9.1",
+    "typedoc": "^0.23.25",
+    "typescript": "^4.9.5"
+  },
+  "dependencies": {
+    "chalk": "^5.2.0",
+    "commander": "^10.0.1",
+    "glob": "^11.0.1",
+    "inquirer": "^9.2.6",
+    "ora": "^6.3.0",
+    "rollup-plugin-copy": "^3.5.0"
+  },
+  "jest": {
+    "preset": "ts-jest/presets/default-esm",
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ],
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1",
+      "^@cli/(.*)$": "<rootDir>/src/cli/$1",
+      "^@utils/(.*)$": "<rootDir>/src/utils/$1",
+      "^@context/(.*)$": "<rootDir>/src/context/$1",
+      "^@crypto/(.*)$": "<rootDir>/src/crypto/$1",
+      "^@encoding/(.*)$": "<rootDir>/src/encoding/$1",
+      "^@errors/(.*)$": "<rootDir>/src/errors/$1",
+      "^@types/(.*)$": "<rootDir>/src/types/$1"
+    },
+    "testEnvironment": "node",
+    "transform": {
+      "^.+\\.tsx?$": [
+        "ts-jest",
+        {
+          "useESM": true
+        }
+      ]
+    },
+    "setupFilesAfterEnv": [
+      "<rootDir>/jest.setup.js"
+    ]
+  }
+}
