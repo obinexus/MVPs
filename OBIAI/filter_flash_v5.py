@@ -98,30 +98,30 @@ class RoboticsInterfaceModule(Module):
 
 class FilterFlashCognitiveSystem:
     
-def __init__(self):
-    # Adjusted thresholds for realistic confidence ranges
-    self.EPISTEMIC_CONFIDENCE_THRESHOLD = 0.65  # Lowered from 0.954 to 0.65
-    self.FLASH_THRESHOLD = 0.50  # Flash mode below 0.50
-    self.HYBRID_THRESHOLD_LOW = 0.50  # Hybrid mode between 0.50-0.65
-    self.HYBRID_THRESHOLD_HIGH = 0.65
-    
-    self.available_modules = {
-        "voice_interface": VoiceInterfaceModule,
-        "vision_module": VisionModule,
-        "accessibility_features": AccessibilityModule,
-        "robotics_interface": RoboticsInterfaceModule
-    }
-    self.loaded_modules: Dict[str, Module] = {}
-    self.system_state = SystemState(
-        confidence_level=0.5,
-        current_mode=CognitiveMode.FILTER,
-        active_modules=[],
-        knowledge_state={},
-        working_memory={},
-        timestamp=0.0
-    )
-    self.scaler = StandardScaler()
-    self.pca = PCA(n_components=3)
+    def __init__(self):
+        # Adjusted thresholds for realistic confidence ranges
+        self.EPISTEMIC_CONFIDENCE_THRESHOLD = 0.65  # Lowered from 0.954 to 0.65
+        self.FLASH_THRESHOLD = 0.50  # Flash mode below 0.50
+        self.HYBRID_THRESHOLD_LOW = 0.50  # Hybrid mode between 0.50-0.65
+        self.HYBRID_THRESHOLD_HIGH = 0.65
+        
+        self.available_modules = {
+            "voice_interface": VoiceInterfaceModule,
+            "vision_module": VisionModule,
+            "accessibility_features": AccessibilityModule,
+            "robotics_interface": RoboticsInterfaceModule
+        }
+        self.loaded_modules: Dict[str, Module] = {}
+        self.system_state = SystemState(
+            confidence_level=0.5,
+            current_mode=CognitiveMode.FILTER,
+            active_modules=[],
+            knowledge_state={},
+            working_memory={},
+            timestamp=0.0
+        )
+        self.scaler = StandardScaler()
+        self.pca = PCA(n_components=3)
 
 # Also update determine_cognitive_mode method:
 def determine_cognitive_mode(self, input_data: np.ndarray, 
