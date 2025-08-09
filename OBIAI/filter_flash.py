@@ -169,16 +169,24 @@ class FilterFlashCognitiveSystem:
         original_shape = tensor_4d.shape
         reshaped_data = tensor_4d.reshape(-1, original_shape[-1])
         
+        # Ensure we have enough data points for meaningful clustering
+        if reshaped_data.shape[0] < k:
+            k = max(2, reshaped_data.shape[0] - 1)
+            logger.warning(f"Adjusted k to {k} due to insufficient data points")
+        
         # Standardize the data
         scaled_data = self.scaler.fit_transform(reshaped_data)
         
         # Apply k-NN clustering
-        knn = NearestNeighbors(n_neighbors=k, algorithm='auto')
+        knn = NearestNeighbors(n_neighbors=min(k, scaled_data.shape[0]), algorithm='auto')
         knn.fit(scaled_data)
         distances, indices = knn.kneighbors(scaled_data)
         
         # Create cluster assignments based on nearest neighbors
-        cluster_assignments = np.argmin(distances[:, 1:], axis=1)  # Skip self (index 0)
+        if distances.shape[1] > 1:
+            cluster_assignments = np.argmin(distances[:, 1:], axis=1)  # Skip self (index 0)
+        else:
+            cluster_assignments = np.zeros(distances.shape[0], dtype=int)
         
         # Group data by similarity metrics (cluster means)
         unique_clusters = np.unique(cluster_assignments)
@@ -191,13 +199,40 @@ class FilterFlashCognitiveSystem:
             
         clustered_array = np.array(clustered_features)
         
-        # Transform to 3D representation using PCA
-        if clustered_array.shape[1] > 3:
-            semantic_map_3d = self.pca.fit_transform(clustered_array)
+        # Transform to 3D representation using PCA with proper validation
+        n_samples, n_features = clustered_array.shape
+        target_components = min(3, n_samples, n_features)
+        
+        if target_components < 3 and n_features > 3:
+            # We have high-dimensional features but few samples
+            logger.info(f"Using {target_components} components due to sample constraints")
+            if target_components > 0:
+                pca_temp = PCA(n_components=target_components)
+                semantic_map_3d = pca_temp.fit_transform(clustered_array)
+                
+                # Pad to 3D if needed
+                if semantic_map_3d.shape[1] < 3:
+                    padding = np.zeros((semantic_map_3d.shape[0], 3 - semantic_map_3d.shape[1]))
+                    semantic_map_3d = np.hstack([semantic_map_3d, padding])
+            else:
+                # Fallback: create dummy 3D representation
+                semantic_map_3d = np.random.rand(max(1, n_samples), 3) * 0.1
+                
+        elif n_features > 3 and n_samples >= 3:
+            # Normal case: reduce high-dimensional features to 3D
+            pca_temp = PCA(n_components=3)
+            semantic_map_3d = pca_temp.fit_transform(clustered_array)
+            
         else:
-            semantic_map_3d = clustered_array
+            # Low-dimensional input: pad or truncate to 3D
+            if n_features < 3:
+                padding = np.zeros((n_samples, 3 - n_features))
+                semantic_map_3d = np.hstack([clustered_array, padding])
+            else:
+                semantic_map_3d = clustered_array[:, :3]
             
         logger.info(f"Reduced 4D tensor {original_shape} to 3D semantic map {semantic_map_3d.shape}")
+        logger.info(f"Cluster analysis: {len(unique_clusters)} clusters from {n_samples} samples")
         return semantic_map_3d
     
     def compute_semantic_distance(self, verb_noun_pairs: List[Tuple[str, str]], 
