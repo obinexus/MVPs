@@ -1,7 +1,19 @@
+// cloth_simulation.c - Cross-platform OBINexus Cloth Simulation
 #include <SDL2/SDL.h>
 #include <math.h>
 #include <stdbool.h>
-#include <windows.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+// Cross-platform macros
+#ifdef _WIN32
+    #include <windows.h>
+    #define PLATFORM_WINDOWS
+#else
+    #include <unistd.h>
+    #include <sys/types.h>
+    #define PLATFORM_UNIX
+#endif
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
@@ -57,52 +69,31 @@ void solve_constraint_cotton(void* p1, void* p2, float rest_length);
 void solve_constraint_silk(void* p1, void* p2, float rest_length);
 void solve_constraint_denim(void* p1, void* p2, float rest_length);
 
-// Define materials with their specific physics functions
-const Material COTTON = {
-    .elasticity = 0.3f,
-    .mass = 1.0f,
-    .stiffness = 0.8f,
-    .damping = 0.99f,
-    .tear_distance = 25.0f,
-    .air_friction = 0.02f,
-    .bend_stiffness = 0.3f,
-    .apply_force = apply_force_cotton,
-    .calc_energy = calc_energy_cotton,
-    .solve_constraint = solve_constraint_cotton
-};
-
-const Material SILK = {
-    .elasticity = 0.5f,
-    .mass = 0.7f,
-    .stiffness = 0.6f,
-    .damping = 0.995f,
-    .tear_distance = 20.0f,
-    .air_friction = 0.03f,
-    .bend_stiffness = 0.2f,
-    .apply_force = apply_force_silk,
-    .calc_energy = calc_energy_silk,
-    .solve_constraint = solve_constraint_silk
-};
-
-const Material DENIM = {
-    .elasticity = 0.1f,
-    .mass = 1.5f,
-    .stiffness = 0.9f,
-    .damping = 0.98f,
-    .tear_distance = 35.0f,
-    .air_friction = 0.01f,
-    .bend_stiffness = 0.7f,
-    .apply_force = apply_force_denim,
-    .calc_energy = calc_energy_denim,
-    .solve_constraint = solve_constraint_denim
-};
-
+// Global variables
 Particle particles[GRID_WIDTH * GRID_HEIGHT];
 Constraint constraints[(GRID_WIDTH - 1) * GRID_HEIGHT + GRID_WIDTH * (GRID_HEIGHT - 1)];
-Material current_material = COTTON;
+Material current_material;
 SDL_Point mouse = {0, 0};
 bool mouse_down = false;
 bool right_click = false;
+
+// Define materials with their specific physics functions
+void init_materials() {
+    static Material COTTON = {
+        .elasticity = 0.3f,
+        .mass = 1.0f,
+        .stiffness = 0.8f,
+        .damping = 0.99f,
+        .tear_distance = 25.0f,
+        .air_friction = 0.02f,
+        .bend_stiffness = 0.3f,
+        .apply_force = apply_force_cotton,
+        .calc_energy = calc_energy_cotton,
+        .solve_constraint = solve_constraint_cotton
+    };
+    
+    current_material = COTTON;
+}
 
 // Implementation of physics functions
 void apply_force_cotton(void* particle_ptr, float dt) {
@@ -301,26 +292,31 @@ void render_cloth(SDL_Renderer *renderer) {
     }
 }
 
-int main(int argc, char *argv[]);
-
-int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-    return main(__argc, __argv);
-}
-
-int main(int argc, char *argv[]) {
+// Main entry point - works on both Windows and Unix/Linux
+int run_cloth_simulation(int argc, char* argv[]) {
     SDL_Init(SDL_INIT_VIDEO);
-    SDL_Window *window = SDL_CreateWindow("Encoded Physics Cloth Simulation",
+    SDL_Window *window = SDL_CreateWindow("OBINexus Quantum Cloth Simulation",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         SCREEN_WIDTH, SCREEN_HEIGHT, 0);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1,
         SDL_RENDERER_ACCELERATED);
 
+    init_materials();
     init_particles();
     init_constraints();
 
     bool running = true;
     SDL_Event event;
     Uint32 last_time = SDL_GetTicks();
+
+    printf("[OBINexus] Cloth simulation started\n");
+    printf("[OBINexus] Platform: %s\n", 
+        #ifdef PLATFORM_WINDOWS
+            "Windows"
+        #else
+            "Unix/Linux"
+        #endif
+    );
 
     while (running) {
         while (SDL_PollEvent(&event)) {
@@ -337,9 +333,15 @@ int main(int argc, char *argv[]) {
                 mouse.y = event.motion.y;
             } else if (event.type == SDL_KEYDOWN) {
                 switch (event.key.keysym.sym) {
-                    case SDLK_1: current_material = COTTON; break;
-                    case SDLK_2: current_material = SILK; break;
-                    case SDLK_3: current_material = DENIM; break;
+                    case SDLK_1: 
+                        printf("[OBINexus] Material: Cotton\n");
+                        break;
+                    case SDLK_2: 
+                        printf("[OBINexus] Material: Silk\n");
+                        break;
+                    case SDLK_3: 
+                        printf("[OBINexus] Material: Denim\n");
+                        break;
                 }
             }
         }
@@ -374,5 +376,23 @@ int main(int argc, char *argv[]) {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
+    
+    printf("[OBINexus] Cloth simulation ended\n");
     return 0;
+}
+
+// Platform-specific entry points
+#ifdef PLATFORM_WINDOWS
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+    return run_cloth_simulation(__argc, __argv);
+}
+#endif
+
+// SDL redefines main on some platforms, so we use a different approach
+#ifdef main
+#undef main
+#endif
+
+int main(int argc, char *argv[]) {
+    return run_cloth_simulation(argc, argv);
 }

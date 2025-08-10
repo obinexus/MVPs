@@ -36,7 +36,7 @@ void signal_handler(int sig);
 int launch_detached_process(const char* executable, char* const argv[]);
 void transfer_pid_to_child(pid_t parent, pid_t child);
 
-// External function from cloth_simulation.c
+// External function from cloth_simulation.c main.c 
 extern int run_cloth_simulation(int argc, char* argv[]);
 
 // Initialize process list
