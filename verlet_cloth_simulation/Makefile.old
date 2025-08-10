@@ -3,17 +3,7 @@ CC = gcc
 CXX = g++
 CFLAGS = -Wall -g -pthread -D_GNU_SOURCE
 CXXFLAGS = -Wall -g -std=c++17 -pthread
-
-# SDL2 configuration
-SDL2_CFLAGS := $(shell sdl2-config --cflags 2>/dev/null)
-SDL2_LIBS := $(shell sdl2-config --libs 2>/dev/null)
-
-ifeq ($(SDL2_LIBS),)
-    $(error SDL2 not found. Install with: sudo apt install libsdl2-dev)
-endif
-
-CFLAGS += $(SDL2_CFLAGS)
-LDFLAGS = $(SDL2_LIBS) -lpthread -lm
+LDFLAGS = -lSDL2 -lSDL2main -lpthread -lm
 
 # Directories
 BUILD_DIR = build
@@ -33,15 +23,9 @@ ALL_OBJECTS = $(C_OBJECTS) $(CPP_OBJECTS)
 TARGET = $(BIN_DIR)/obinexus_cloth
 DETACHED_TARGET = $(BIN_DIR)/obinexus_cloth_detached
 
-.PHONY: all clean detach check-deps
+.PHONY: all clean detach
 
-all: check-deps $(TARGET) $(DETACHED_TARGET)
-
-# Check dependencies
-check-deps:
-	@echo "Checking SDL2 installation..."
-	@which sdl2-config > /dev/null || (echo "ERROR: SDL2 not found" && exit 1)
-	@echo "SDL2 found: $(SDL2_CFLAGS)"
+all: $(TARGET) $(DETACHED_TARGET)
 
 # Create directories
 $(BUILD_DIR) $(BIN_DIR) $(OBJ_DIR):
@@ -72,17 +56,9 @@ detach: $(DETACHED_TARGET)
 clean:
 	rm -rf $(BUILD_DIR)
 
-# Install SDL2 dependencies (Debian/Ubuntu/WSL)
+# Install SDL2 dependencies (Ubuntu/Debian)
 deps:
-	sudo apt update
-	sudo apt install -y libsdl2-dev libsdl2-2.0-0
-	@echo "SDL2 installed successfully"
-
-# WSL-specific setup
-wsl-setup:
-	@echo "Setting up WSL environment..."
-	@echo "export DISPLAY=\$$(cat /etc/resolv.conf | grep nameserver | awk '{print \$$2}'):0" >> ~/.bashrc
-	@echo "WSL display configured. Restart terminal or run: source ~/.bashrc"
+	sudo apt-get install libsdl2-dev libsdl2-2.0-0
 
 # Debug build
 debug: CFLAGS += -DDEBUG -O0
