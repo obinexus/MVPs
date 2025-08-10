@@ -8,6 +8,19 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <errno.h>
+#include <sys/syscall.h>
+
+// Define SYS_gettid if not available (common on older systems)
+#ifndef SYS_gettid
+    #ifdef __x86_64__
+        #define SYS_gettid 186
+    #elif __i386__
+        #define SYS_gettid 224
+    #else
+        // Fallback - use pthread_self instead
+        #define USE_PTHREAD_SELF
+    #endif
+#endif
 
 // Thread-based linked list for process management
 typedef struct ProcessNode {
@@ -36,7 +49,7 @@ void signal_handler(int sig);
 int launch_detached_process(const char* executable, char* const argv[]);
 void transfer_pid_to_child(pid_t parent, pid_t child);
 
-// External function from cloth_simulation.c main.c 
+// External function from cloth_simulation.c
 extern int run_cloth_simulation(int argc, char* argv[]);
 
 // Initialize process list
@@ -54,13 +67,13 @@ void add_process(pid_t pid, pthread_t tid, const char* name, int detached) {
     node->thread_id = tid;
     node->process_name = strdup(name);
     node->is_detached = detached;
-    
+
     pthread_mutex_lock(&g_process_list->mutex);
     node->next = g_process_list->head;
     g_process_list->head = node;
     g_process_list->active_count++;
     pthread_mutex_unlock(&g_process_list->mutex);
-    
+
     printf("[OBINexus] Process added: PID=%d, Thread=%lu, Name=%s, Detached=%d\n",
            pid, (unsigned long)tid, name, detached);
 }
@@ -68,10 +81,10 @@ void add_process(pid_t pid, pthread_t tid, const char* name, int detached) {
 // Remove process from list
 void remove_process(pid_t pid) {
     pthread_mutex_lock(&g_process_list->mutex);
-    
+
     ProcessNode* current = g_process_list->head;
     ProcessNode* prev = NULL;
-    
+
     while (current != NULL) {
         if (current->pid == pid) {
             if (prev == NULL) {
@@ -79,7 +92,7 @@ void remove_process(pid_t pid) {
             } else {
                 prev->next = current->next;
             }
-            
+
             free(current->process_name);
             free(current);
             g_process_list->active_count--;
@@ -88,26 +101,33 @@ void remove_process(pid_t pid) {
         prev = current;
         current = current->next;
     }
-    
+
     pthread_mutex_unlock(&g_process_list->mutex);
 }
 
 // Thread function for detached cloth simulation
 void* detached_cloth_thread(void* arg) {
     char** argv = (char**)arg;
-    pid_t tid = syscall(SYS_gettid);
-    
-    printf("[OBINexus] Detached thread started: TID=%d\n", tid);
-    
+
+    #ifdef USE_PTHREAD_SELF
+        // Use pthread_self as thread ID
+        unsigned long tid = (unsigned long)pthread_self();
+    #else
+        // Use gettid syscall
+        pid_t tid = syscall(SYS_gettid);
+    #endif
+
+    printf("[OBINexus] Detached thread started: TID=%lu\n", (unsigned long)tid);
+
     // Add to process list
     add_process(getpid(), pthread_self(), "obinexus_cloth_detached", 1);
-    
+
     // Run the cloth simulation
     run_cloth_simulation(1, argv);
-    
+
     // Clean up
     remove_process(getpid());
-    
+
     return NULL;
 }
 
@@ -117,7 +137,7 @@ void signal_handler(int sig) {
         // Reap child processes
         pid_t pid;
         int status;
-        
+
         while ((pid = waitpid(-1, &status, WNOHANG)) > 0) {
             printf("[OBINexus] Child process %d exited with status %d\n", pid, status);
             remove_process(pid);
@@ -132,7 +152,7 @@ void signal_handler(int sig) {
 // Launch detached process with fork
 int launch_detached_process(const char* executable, char* const argv[]) {
     pid_t pid = fork();
-    
+
     if (pid < 0) {
         perror("fork");
         return -1;
@@ -143,7 +163,7 @@ int launch_detached_process(const char* executable, char* const argv[]) {
             perror("setsid");
             exit(1);
         }
-        
+
         // Fork again to ensure we can't acquire a controlling terminal
         pid_t pid2 = fork();
         if (pid2 < 0) {
@@ -153,18 +173,18 @@ int launch_detached_process(const char* executable, char* const argv[]) {
             // First child exits
             exit(0);
         }
-        
+
         // Second child continues
         // Close standard file descriptors
         close(STDIN_FILENO);
         close(STDOUT_FILENO);
         close(STDERR_FILENO);
-        
+
         // Redirect to /dev/null
         freopen("/dev/null", "r", stdin);
         freopen("/tmp/obinexus_cloth.log", "a", stdout);
         freopen("/tmp/obinexus_cloth.log", "a", stderr);
-        
+
         // Execute the program
         execvp(executable, argv);
         perror("execvp");
@@ -181,10 +201,10 @@ int launch_detached_process(const char* executable, char* const argv[]) {
 // Transfer PID ownership to child process
 void transfer_pid_to_child(pid_t parent, pid_t child) {
     printf("[OBINexus] Transferring PID ownership from %d to %d\n", parent, child);
-    
+
     // Update process list
     pthread_mutex_lock(&g_process_list->mutex);
-    
+
     ProcessNode* current = g_process_list->head;
     while (current != NULL) {
         if (current->pid == parent) {
@@ -194,7 +214,7 @@ void transfer_pid_to_child(pid_t parent, pid_t child) {
         }
         current = current->next;
     }
-    
+
     pthread_mutex_unlock(&g_process_list->mutex);
 }
 
@@ -202,7 +222,7 @@ int main(int argc, char* argv[]) {
     int detach_mode = 0;
     int fork_mode = 0;
     int thread_mode = 0;
-    
+
     // Parse command line arguments
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--detach") == 0) {
@@ -215,39 +235,39 @@ int main(int argc, char* argv[]) {
             }
         }
     }
-    
+
     // Initialize process list
     init_process_list();
-    
+
     // Set up signal handlers
     signal(SIGCHLD, signal_handler);
     signal(SIGTERM, signal_handler);
     signal(SIGINT, signal_handler);
-    
+
     printf("[OBINexus] Quantum Cloth Simulation Launcher\n");
-    printf("[OBINexus] Detach: %s, Mode: %s\n", 
+    printf("[OBINexus] Detach: %s, Mode: %s\n",
            detach_mode ? "YES" : "NO",
            thread_mode ? "THREAD" : (fork_mode ? "PROCESS" : "NORMAL"));
-    
+
     if (detach_mode) {
         if (thread_mode) {
             // Create detached thread
             pthread_t cloth_thread;
             pthread_attr_t attr;
-            
+
             pthread_attr_init(&attr);
             pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-            
+
             if (pthread_create(&cloth_thread, &attr, detached_cloth_thread, argv) != 0) {
                 perror("pthread_create");
                 return 1;
             }
-            
+
             pthread_attr_destroy(&attr);
-            
+
             // Keep main thread alive
             printf("[OBINexus] Main thread continuing...\n");
-            
+
             // Simulate other work or wait
             while (g_process_list->active_count > 0) {
                 sleep(1);
@@ -263,10 +283,10 @@ int main(int argc, char* argv[]) {
         run_cloth_simulation(argc, argv);
         remove_process(getpid());
     }
-    
+
     // Cleanup
     pthread_mutex_destroy(&g_process_list->mutex);
     free(g_process_list);
-    
+
     return 0;
 }
