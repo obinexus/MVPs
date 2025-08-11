@@ -1,0 +1,29 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Explicitly declare text files
+*.md text
+*.txt text
+*.js text
+*.html text
+*.css text
+*.json text
+*.yaml text
+*.yml text
+*.sh text eol=lf
+*.puml text
+
+# Binary files
+*.pdf binary
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.gif binary
+*.ico binary
+
+# PlantUML files
+*.puml text eol=lf
+
+# Ignore files in exports
+.gitattributes export-ignore
+.gitignore export-ignore
