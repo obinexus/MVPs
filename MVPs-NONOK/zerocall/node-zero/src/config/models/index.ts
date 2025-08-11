@@ -1,1 +1,0 @@
-export { IZeroConfigModel } from './IZeroConfigModel';
