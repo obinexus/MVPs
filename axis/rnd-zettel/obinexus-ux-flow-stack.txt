@@ -1,0 +1,106 @@
+@startuml OBINexus_UX_Flow_Stack
+!theme plain
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam rectangleBorderThickness 3
+skinparam shadowing true
+skinparam ArrowThickness 2
+
+' Art/Craft hybrid mode color definitions
+!define ART_LEVEL_0_2 #90EE90
+!define ART_LEVEL_3_4 #87CEEB
+!define ART_LEVEL_5_6 #FFB6C1
+!define ART_LEVEL_7_8 #DDA0DD
+!define ART_LEVEL_9 #FFD700
+
+' Define shrinking widths using spacing
+!define WIDTH1 "                                                "
+!define WIDTH2 "                                          "
+!define WIDTH3 "                                    "
+!define WIDTH4 "                              "
+!define WIDTH5 "                        "
+!define WIDTH6 "                  "
+!define WIDTH7 "            "
+
+title OBINexus Shrinking Stack Architecture\nArt/Craft Hybrid Mode with UX Flow
+
+' Create the shrinking stack with proper alignment
+rectangle WIDTH1"**STAKEHOLDER FOUNDATION**\nConstitutional Framework\nArt Level 0-2: Doodle → Sketch"WIDTH1 as foundation #ART_LEVEL_0_2
+
+rectangle WIDTH2"**OBINEXUS ECOSYSTEM**\nCore Infrastructure\nArt Level 3-4: Expression"WIDTH2 as ecosystem #ART_LEVEL_3_4
+
+rectangle WIDTH3"**FRANCHISE DIVISIONS**\nComputing | Publishing | Healthcare\nArt Level 5-6: Activism"WIDTH3 as divisions #ART_LEVEL_5_6
+
+rectangle WIDTH4"**INTEGRATED SERVICES**\nBREATH | LibPolyCall | Puppet\nArt Level 7-8: Embodiment"WIDTH4 as services #ART_LEVEL_7_8
+
+rectangle WIDTH5"**OPERATIONAL LAYER**\nField Support | Mutual Aid\nCollaborative Entrepreneurship"WIDTH5 as operational #FFE4B5
+
+rectangle WIDTH6"**SECTOR TRANSITION**\nIndependent Business\nConstitutional Alignment"WIDTH6 as transition #E6E6FA
+
+rectangle WIDTH7"**AUTONOMOUS SECTOR**\nSustainable Operations\nArt Level 9: Enlightenment"WIDTH7 as sector #ART_LEVEL_9
+
+' UX Flow arrows with labels
+foundation =down=> ecosystem : "**License Grant**"
+ecosystem =down=> divisions : "**Franchise Rights**"
+divisions =down=> services : "**Service Integration**"
+services =down=> operational : "**Implementation**"
+operational =down=> transition : "**Maturity Path**"
+transition =down=> sector : "**Independence**"
+
+' Left side: Art progression
+note left of foundation
+  **Art Development Progression:**
+  
+  **Foundation (0-2)**
+  • Doodle: Pure potential
+  • Sketch: Basic structure
+  • Depiction: Recognizable forms
+  
+  **Digital Threshold (3-4)**
+  • Expression: Digital integration
+  • Embodiment: Multi-medium
+  
+  **Real-World Impact (5-6)**
+  • Self-Activism: DIY networks
+  • Functional Activism: BREATH
+  
+  **Full Integration (7-8)**
+  • Self-Embodiment: Identity
+  • Functional Embodiment: Systems
+  
+  **Leadership (9)**
+  • Enlightenment Management
+end note
+
+' Right side: Business progression
+note right of sector
+  **Business Evolution Path:**
+  
+  **Shrinking Principle:**
+  Wide governance → 
+  Focused operations →
+  Specialized services →
+  Independent sectors
+  
+  **Risk/Reward Model:**
+  • Franchise sovereignty
+  • Operational ownership
+  • Sustainable growth
+  
+  **#nobadocs Protection:**
+  Throughout all levels
+end note
+
+' Division breakdown at center
+note bottom of divisions
+  **Current Franchise Divisions:**
+  • **OBINexus Computing** - Nnamdi Michael Okpala (LibPolyCall, Core Tech)
+  • **Uche Publishing** - Design & Technology Media
+  • **Healthcare Systems** - BREATH Protocol Implementation
+  • **Education Networks** - Puppet Method Development
+  • **Arts Collective** - 9-Level Framework Management
+end note
+
+caption "Shrinking stack visualization showing progression from broad foundation\nto focused sectors with integrated art levels throughout"
+
+@enduml

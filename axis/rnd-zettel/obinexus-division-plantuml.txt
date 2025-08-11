@@ -1,0 +1,99 @@
+@startuml OBINexus_Division_Hierarchy
+!theme plain
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam shadowing false
+skinparam rectangleBorderThickness 2
+
+' Color definitions for hybrid art/craft mode
+!define COMPUTING_COLOR #87CEEB
+!define PUBLISHING_COLOR #98FB98
+!define HEALTHCARE_COLOR #FFB6C1
+!define EDUCATION_COLOR #DDA0DD
+!define ARTS_COLOR #F0E68C
+!define FOUNDATION_COLOR #FFE4B5
+!define SECTOR_COLOR #E6E6FA
+
+' Main OBINexus node
+rectangle "**OBINexus**\nConstitutional Ecosystem" as MAIN #FFF8DC {
+  
+  ' Shrinking hierarchy representation
+  rectangle "Foundation Layer" as foundation #FOUNDATION_COLOR {
+    rectangle "Constitutional Framework\n#nobadocs Protection" as const
+  }
+  
+  ' Division layer with shrinking perspective
+  rectangle "Division Layer" as divisions {
+    
+    ' Computing Division (largest/primary)
+    rectangle "**OBINexus Computing**\nNnamdi Michael Okpala\n• LibPolyCall\n• Core Tech\n• All Integrations" as computing #COMPUTING_COLOR
+    
+    ' Publishing Division
+    rectangle "**Uche Publishing**\n[Owner Name]\n• Design & Tech Media\n• Arts Integration\n• Education Bridge" as publishing #PUBLISHING_COLOR
+    
+    ' Healthcare Division
+    rectangle "**Healthcare Systems**\n[Open Franchise]\n• BREATH Protocol\n• Computing Integration\n• Arts Therapy" as healthcare #HEALTHCARE_COLOR
+    
+    ' Education Division
+    rectangle "**Education Networks**\n[Open Franchise]\n• Puppet Method\n• Universal Access\n• All Divisions" as education #EDUCATION_COLOR
+    
+    ' Arts Division
+    rectangle "**Arts Collective**\n[Open Franchise]\n• 9-Level Framework\n• Cultural Bridge\n• All Divisions" as arts #ARTS_COLOR
+  }
+  
+  ' Sector evolution (shrinking to point)
+  rectangle "Sector Evolution" as sectors #SECTOR_COLOR {
+    rectangle "Health & Social Care\nSector\n(Standalone)" as hsc_sector
+    rectangle "Computing Sector\n(Future State)" as comp_sector
+  }
+}
+
+' Hierarchical connections showing shrinking flow
+foundation -down-> divisions : "Constitutional License"
+
+' Division interconnections
+computing <--> publishing : "Tech/Media"
+computing <--> healthcare : "BREATH AI"
+computing <--> education : "Accessibility"
+computing <--> arts : "Digital Art"
+
+publishing <--> arts : "Cultural Media"
+publishing <--> education : "Educational Content"
+
+healthcare <--> education : "Therapy Methods"
+healthcare <--> arts : "Art as Healing"
+
+education <--> arts : "Creative Learning"
+
+' Sector evolution paths (shrinking perspective)
+divisions -down-> sectors : "Maturity & Independence"
+healthcare ..> hsc_sector : "Evolution Path"
+computing ..> comp_sector : "Future Evolution"
+
+' Annotations for UX direction
+note right of MAIN
+  **Shrinking Graph Principle:**
+  Foundation → Divisions → Sectors
+  
+  Represents progression from:
+  • Broad constitutional base
+  • Focused franchise operations
+  • Independent sector entities
+  
+  Each level becomes more:
+  • Specialized
+  • Autonomous
+  • Sustainable
+end note
+
+' Art level indicators
+note left of arts
+  **Art Levels 0-9:**
+  0: Doodle
+  3: Expression (Digital)
+  6: Functional Activism
+  8: Functional Embodiment
+  9: Enlightenment
+end note
+
+@enduml

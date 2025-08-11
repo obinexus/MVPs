@@ -1,0 +1,69 @@
+@startuml OBINexus_Shrinking_Stack
+!theme plain
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam shadowing true
+skinparam rectangleBorderThickness 2
+skinparam ArrowThickness 2
+
+' Define gradient colors for shrinking effect
+!define COLOR1 #FFE4B5
+!define COLOR2 #87CEEB
+!define COLOR3 #98FB98
+!define COLOR4 #FFB6C1
+!define COLOR5 #DDA0DD
+!define COLOR6 #F0E68C
+!define COLOR7 #E6E6FA
+
+' Title
+title OBINexus Shrinking Stack Architecture\nFrom Foundation to Focused Sectors
+
+' Create shrinking stack structure
+rectangle "**FOUNDATION**\nOBINexus Constitutional Framework\n#nobadocs Protection" as foundation #COLOR1 {
+}
+
+rectangle "    **COMPUTING**\n    Nnamdi Michael Okpala\n    LibPolyCall | Core Tech    " as computing #COLOR2
+
+rectangle "     **PUBLISHING**\n     Uche Publishing\n     Design & Tech     " as publishing #COLOR3
+
+rectangle "      **HEALTHCARE**\n      BREATH Protocol\n      Art Level 6      " as healthcare #COLOR4
+
+rectangle "       **EDUCATION**\n       Puppet Method\n       Accessibility       " as education #COLOR5
+
+rectangle "        **ARTS**\n        9-Level Framework\n        Cultural Bridge        " as arts #COLOR6
+
+rectangle "         **SECTORS**\n         Independent\n         Sustainable         " as sectors #COLOR7
+
+' Create shrinking flow with arrows
+foundation -down-> computing : "License"
+computing -down-> publishing : "Integration"
+publishing -down-> healthcare : "Media"
+healthcare -down-> education : "Methods"
+education -down-> arts : "Learning"
+arts -down-> sectors : "Evolution"
+
+' Side annotations for Art Levels
+note left of foundation
+  **Art Level Mapping:**
+  Level 0-2: Foundation
+  Level 3-4: Expression
+  Level 5-6: Activism
+  Level 7-8: Embodiment
+  Level 9: Enlightenment
+end note
+
+' Right side annotation for progression
+note right of sectors
+  **Shrinking Principle:**
+  Wide → Narrow
+  General → Specific
+  Dependent → Independent
+  
+  Each level focuses
+  and specializes
+end note
+
+' Bottom annotation
+caption "Shrinking graph indicates progression from broad constitutional base\nto focused, independent sector operations"
+
+@enduml

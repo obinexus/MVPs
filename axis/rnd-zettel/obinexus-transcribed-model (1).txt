@@ -1,0 +1,97 @@
+@startuml OBINexus_Transcribed_Model
+!theme plain
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam rectangleBorderThickness 2
+skinparam ArrowThickness 2
+skinparam shadowing true
+
+' Based on handwritten transcription
+title OBINexus Stakeholder Flow Model\nTranscribed from Handwritten Design
+
+' Color scheme for hybrid art/craft mode
+!define LEVEL1_COLOR #FFE4B5
+!define LEVEL2_COLOR #87CEEB
+!define LEVEL3_COLOR #98FB98
+!define LEVEL4_COLOR #FFB6C1
+!define LEVEL5_COLOR #DDA0DD
+!define LEVEL6_COLOR #F0E68C
+!define LEVEL7_COLOR #E6E6FA
+
+' Main structure as shown in handwriting
+package "OBINexus Stack Structure" {
+  
+  ' Top level - Stakeholder
+  rectangle "**STAKEHOLDER**\nFoundation Level\nConstitutional Rights" as stakeholder #LEVEL1_COLOR
+  
+  ' Second level - Product
+  rectangle "**PRODUCT**\nLibPolyCall\nCore Technology Platform" as product #LEVEL2_COLOR
+  
+  ' Third level - Department
+  rectangle "**DEPARTMENT**\nDivision Structure\nFranchise Operations" as department #LEVEL3_COLOR
+  
+  ' Fourth level - Service
+  rectangle "**SERVICE**\nBREATH | Puppet Method\nIntegrated Solutions" as service #LEVEL4_COLOR
+  
+  ' Fifth level - Implementation
+  rectangle "**IMPLEMENTATION**\nCode Base\nTechnical Infrastructure" as implementation #LEVEL5_COLOR
+  
+  ' Sixth level - Operational
+  rectangle "**OPERATIONAL**\nField Teams\nMutual Support Networks" as operational #LEVEL6_COLOR
+  
+  ' Seventh level - Sector
+  rectangle "**SECTOR**\nIndependent Entity\nSustainable Business" as sector #LEVEL7_COLOR
+}
+
+' Flow connections as shown in handwriting
+stakeholder --> product : "develops"
+product --> department : "organizes"
+department --> service : "delivers"
+service --> implementation : "builds"
+implementation --> operational : "deploys"
+operational --> sector : "evolves to"
+
+' Left annotation - shrinking indication
+note left
+  **Shrinking Graph Principle:**
+  ↓ Broad ownership base
+  ↓ Focused product development
+  ↓ Departmental organization
+  ↓ Service specialization
+  ↓ Technical implementation
+  ↓ Operational deployment
+  ↓ Independent sector
+  
+  Width decreases as
+  specificity increases
+end note
+
+' Right annotation - integration points
+note right
+  **Integration Architecture:**
+  
+  Each level maintains:
+  • Upward accountability
+  • Downward authority
+  • Lateral collaboration
+  
+  **Key Features:**
+  • Risk/reward sovereignty
+  • Constitutional protection
+  • Collaborative growth
+end note
+
+' Bottom table representation
+note bottom
+  **Division Mapping Table:**
+  |= Division |= Owner/Operator |= Focus |= Integration |
+  | OBINexus Computing | Nnamdi Michael Okpala | LibPolyCall, Core Tech | All divisions |
+  | Uche Publishing | [Owner Name] | Design & Technology | Arts, Education |
+  | Healthcare Systems | [Open Franchise] | BREATH Protocol | Computing, Arts |
+  | Education Networks | [Open Franchise] | Puppet Method | All divisions |
+  | Arts Collective | [Open Franchise] | 9-Level Framework | All divisions |
+end note
+
+caption "Direct transcription of handwritten OBINexus organizational model\nShowing stakeholder → product → service flow with shrinking architecture"
+
+@enduml
