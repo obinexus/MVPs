@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBINexus DOP UI System</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #333;
+        }
+        
+        .telemetry-display {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            font-family: monospace;
+            font-size: 0.875rem;
+        }
+        
+        .telemetry-display h3 {
+            color: #87CEEB;
+            margin-bottom: 0.5rem;
+        }
+        
+        .accessibility-controls {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .form-section {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #e0e0e0;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            background: #0a0a0a;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #ffffff;
+            font-size: 1rem;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #87CEEB;
+        }
+        
+        button {
+            padding: 0.75rem 1.5rem;
+            background: #87CEEB;
+            color: #000;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        button:hover {
+            background: #6ab7ef;
+            transform: translateY(-1px);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .success-message {
+            background: #1a3a1a;
+            border: 1px solid #2a5a2a;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            color: #4ade80;
+        }
+        
+        .error-message {
+            background: #3a1a1a;
+            border: 1px solid #5a2a2a;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            color: #f87171;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+        
+        /* Accessibility mode styles */
+        body.accessibility-mode {
+            font-size: 1.125rem;
+        }
+        
+        body.accessibility-mode button {
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+        }
+        
+        body.accessibility-mode input,
+        body.accessibility-mode select {
+            padding: 1rem;
+            font-size: 1.125rem;
+        }
+        
+        .simple-mode .complex-text {
+            display: none;
+        }
+        
+        .standard-mode .simple-text {
+            display: none;
+        }
+        
+        .pyramid-visualization {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .art-level {
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            border-radius: 4px;
+            display: inline-block;
+            font-weight: 500;
+        }
+        
+        .level-0-2 { background: #90EE90; color: #000; }
+        .level-3-4 { background: #87CEEB; color: #000; }
+        .level-5-6 { background: #FFB6C1; color: #000; }
+        .level-7-8 { background: #DDA0DD; color: #000; }
+        .level-9 { background: #FFD700; color: #000; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>OBINexus DOP UI/UX System</h1>
+            <p>Data-Oriented Programming with Telemetry & Accessibility</p>
+        </header>
+        
+        <!-- Telemetry Display -->
+        <div class="telemetry-display" id="telemetryDisplay">
+            <h3>Telemetry Data Stream</h3>
+            <pre id="telemetryOutput">{
+  "accessibilityScore": 100,
+  "interactions": 0,
+  "errors": 0,
+  "cognitiveLoad": 0,
+  "currentGUID": null
+}</pre>
+        </div>
+        
+        <!-- Accessibility Controls -->
+        <div class="accessibility-controls">
+            <h2>Accessibility Settings</h2>
+            <div class="checkbox-group">
+                <input type="checkbox" id="accessibilityMode" data-key="accessibility-toggle">
+                <label for="accessibilityMode">Enable Accessibility Mode</label>
+            </div>
+            
+            <div id="disabilityOptions" style="display: none;">
+                <label for="disabilityType">Disability Type</label>
+                <select id="disabilityType" data-key="disability-type">
+                    <option value="">Select type...</option>
+                    <option value="physical">Physical (e.g., broken hand)</option>
+                    <option value="cognitive">Cognitive</option>
+                    <option value="visual">Visual</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Main Form Section -->
+        <div class="form-section" id="mainForm">
+            <h2 data-key="form-title">
+                <span class="complex-text">OBINexus Service Registration</span>
+                <span class="simple-text">Sign Up</span>
+            </h2>
+            
+            <div id="registrationPhase">
+                <div class="form-group">
+                    <label for="username" data-key="username-label">
+                        <span class="complex-text">Username</span>
+                        <span class="simple-text">Your Name</span>
+                    </label>
+                    <input type="text" id="username" data-key="username-input" data-ref="registration/username">
+                </div>
+                
+                <div class="form-group">
+                    <label for="service" data-key="service-label">
+                        <span class="complex-text">Select Service Division</span>
+                        <span class="simple-text">What do you need?</span>
+                    </label>
+                    <select id="service" data-key="service-select" data-ref="registration/service">
+                        <option value="">Choose...</option>
+                        <option value="computing">OBINexus Computing</option>
+                        <option value="publishing">Uche Publishing</option>
+                        <option value="healthcare">Healthcare Systems</option>
+                        <option value="education">Education Networks</option>
+                        <option value="arts">Arts Collective</option>
+                    </select>
+                </div>
+                
+                <button type="button" id="submitBtn" data-key="submit-button">
+                    <span class="complex-text">Complete Registration</span>
+                    <span class="simple-text">Sign Up</span>
+                </button>
+            </div>
+            
+            <div id="completionPhase" style="display: none;">
+                <div class="success-message">
+                    <h3 data-key="success-title">
+                        <span class="complex-text">Registration Complete</span>
+                        <span class="simple-text">All Done!</span>
+                    </h3>
+                    <p data-key="success-message">
+                        <span class="complex-text">Your registration for the service has been successfully completed.</span>
+                        <span class="simple-text">You can use the service now.</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Art Level Visualization -->
+        <div class="pyramid-visualization">
+            <h3>OBINexus Art Methodology Level</h3>
+            <div id="artLevelDisplay">
+                <span class="art-level level-3-4" data-key="current-art-level">Level 3: Expression - Digital Integration</span>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+// ===== Core DOP Adapter (Extended from your base) =====
+class DOPAdapter {
+    constructor(logic) {
+        this.logic = logic;
+    }
+    
+    toFunctional() {
+        const { name, state, actions, render, telemetry } = this.logic;
+        
+        // Create closure for state persistence
+        let currentState = { ...state };
+        
+        return function FunctionalComponent(props = {}) {
+            const ctx = {
+                state: currentState,
+                props,
+                setState: (updates) => {
+                    currentState = { ...currentState, ...updates };
+                    if (telemetry) {
+                        telemetry.track('state_change', { component: name, state: currentState });
+                    }
+                },
+                telemetry
+            };
+            
+            // Bind actions with context
+            Object.keys(actions).forEach(key => {
+                ctx[key] = actions[key].bind(null, ctx);
+            });
+            
+            return render(ctx);
+        };
+    }
+    
+    toOOP() {
+        const { name, state, actions, render, telemetry } = this.logic;
+        
+        return class OOPComponent {
+            constructor(props = {}) {
+                this.state = { ...state };
+                this.props = props;
+                this.telemetry = telemetry;
+                
+                // Properly bind actions
+                Object.keys(actions).forEach((key) => {
+                    this[key] = actions[key].bind(this);
+                });
+            }
+            
+            setState(updates) {
+                this.state = { ...this.state, ...updates };
+                if (this.telemetry) {
+                    this.telemetry.track('state_change', { 
+                        component: name, 
+                        state: this.state 
+                    });
+                }
+            }
+            
+            render() {
+                return render(this);
+            }
+        };
+    }
+}
+
+// ===== Telemetry System =====
+class TelemetrySystem {
+    constructor() {
+        this.metrics = {
+            accessibilityScore: 100,
+            interactions: 0,
+            errors: 0,
+            cognitiveLoad: 0,
+            currentGUID: null,
+            stateHistory: []
+        };
+        
+        this.generateGUID();
+    }
+    
+    generateGUID() {
+        // Simple GUID generator (in production, use crypto-seeded version)
+        this.metrics.currentGUID = 'guid_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    }
+    
+    track(action, data) {
+        const event = {
+            timestamp: Date.now(),
+            action,
+            data,
+            guid: this.metrics.currentGUID
+        };
+        
+        this.metrics.stateHistory.push(event);
+        this.metrics.interactions++;
+        
+        // Update metrics based on action
+        if (action === 'error') {
+            this.metrics.errors++;
+            this.metrics.cognitiveLoad += 10;
+        } else if (action === 'success') {
+            this.metrics.cognitiveLoad = Math.max(0, this.metrics.cognitiveLoad - 5);
+        } else if (action === 'interaction') {
+            this.metrics.cognitiveLoad += 2;
+        }
+        
+        // Calculate accessibility score
+        this.metrics.accessibilityScore = Math.max(0, Math.min(100, 
+            100 - (this.metrics.errors * 10) - (this.metrics.cognitiveLoad / 2)
+        ));
+        
+        // Update display
+        this.updateDisplay();
+        
+        return event;
+    }
+    
+    updateDisplay() {
+        const display = document.getElementById('telemetryOutput');
+        if (display) {
+            const displayData = {
+                ...this.metrics,
+                stateHistory: `[${this.metrics.stateHistory.length} events]`
+            };
+            display.textContent = JSON.stringify(displayData, null, 2);
+        }
+    }
+    
+    getScore() {
+        return this.metrics.accessibilityScore;
+    }
+}
+
+// ===== Global Telemetry Instance =====
+const globalTelemetry = new TelemetrySystem();
+
+// ===== UI State Manager Component =====
+const UIStateManagerLogic = {
+    name: 'UIStateManager',
+    state: {
+        hasDisability: false,
+        disabilityType: null,
+        uiMode: 'standard' // 'standard' or 'simple'
+    },
+    telemetry: globalTelemetry,
+    actions: {
+        toggleAccessibility(ctx) {
+            const newState = !ctx.state.hasDisability;
+            ctx.setState({ 
+                hasDisability: newState,
+                uiMode: newState ? 'simple' : 'standard'
+            });
+            
+            // Update body class
+            document.body.classList.toggle('accessibility-mode', newState);
+            document.body.classList.toggle('simple-mode', newState);
+            document.body.classList.toggle('standard-mode', !newState);
+            
+            // Show/hide disability options
+            document.getElementById('disabilityOptions').style.display = 
+                newState ? 'block' : 'none';
+            
+            ctx.telemetry.track('accessibility_toggle', { enabled: newState });
+        },
+        
+        setDisabilityType(ctx, type) {
+            ctx.setState({ disabilityType: type });
+            ctx.telemetry.track('disability_type_set', { type });
+            
+            // Adjust UI based on disability type
+            if (type === 'cognitive') {
+                // Further simplify UI
+                document.querySelectorAll('[data-key]').forEach(el => {
+                    if (el.hasAttribute('data-simple-text')) {
+                        el.textContent = el.getAttribute('data-simple-text');
+                    }
+                });
+            }
+        }
+    },
+    render(ctx) {
+        return {
+            state: ctx.state,
+            toggle: ctx.toggleAccessibility,
+            setType: ctx.setDisabilityType
+        };
+    }
+};
+
+// ===== Registration Form Component =====
+const RegistrationFormLogic = {
+    name: 'RegistrationForm',
+    state: {
+        username: '',
+        service: '',
+        phase: 'registration', // 'registration' or 'completed'
+        errors: []
+    },
+    telemetry: globalTelemetry,
+    actions: {
+        updateField(ctx, field, value) {
+            ctx.setState({ [field]: value });
+            ctx.telemetry.track('field_update', { field, value });
+        },
+        
+        validate(ctx) {
+            const errors = [];
+            
+            if (!ctx.state.username || ctx.state.username.length < 3) {
+                errors.push('Username must be at least 3 characters');
+            }
+            
+            if (!ctx.state.service) {
+                errors.push('Please select a service');
+            }
+            
+            ctx.setState({ errors });
+            
+            if (errors.length > 0) {
+                ctx.telemetry.track('error', { reason: 'validation_failed', errors });
+            }
+            
+            return errors.length === 0;
+        },
+        
+        submit(ctx) {
+            if (ctx.validate()) {
+                ctx.setState({ phase: 'completed', errors: [] });
+                ctx.telemetry.track('success', { 
+                    username: ctx.state.username,
+                    service: ctx.state.service 
+                });
+                
+                // Update art level display
+                updateArtLevel(6); // Functional Activism
+            }
+        }
+    },
+    render(ctx) {
+        return {
+            state: ctx.state,
+            updateField: ctx.updateField,
+            submit: ctx.submit
+        };
+    }
+};
+
+// ===== Initialize Components =====
+const adapter = new DOPAdapter(UIStateManagerLogic);
+const uiStateManager = adapter.toFunctional();
+const uiState = uiStateManager();
+
+const formAdapter = new DOPAdapter(RegistrationFormLogic);
+const registrationForm = formAdapter.toFunctional();
+const form = registrationForm();
+
+// ===== Art Level Display =====
+function updateArtLevel(level) {
+    const levelMap = {
+        0: { class: 'level-0-2', text: 'Level 0: Doodle - Pure Potential' },
+        3: { class: 'level-3-4', text: 'Level 3: Expression - Digital Integration' },
+        6: { class: 'level-5-6', text: 'Level 6: Functional Activism - Process Complete' },
+        8: { class: 'level-7-8', text: 'Level 8: Functional Embodiment - Full Integration' },
+        9: { class: 'level-9', text: 'Level 9: Enlightenment Management' }
+    };
+    
+    const display = document.getElementById('artLevelDisplay');
+    const levelInfo = levelMap[level] || levelMap[3];
+    
+    display.innerHTML = `<span class="art-level ${levelInfo.class}" data-key="current-art-level">${levelInfo.text}</span>`;
+}
+
+// ===== Event Bindings =====
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize UI mode
+    document.body.classList.add('standard-mode');
+    
+    // Accessibility toggle
+    document.getElementById('accessibilityMode').addEventListener('change', (e) => {
+        uiState.toggle();
+    });
+    
+    // Disability type selector
+    document.getElementById('disabilityType').addEventListener('change', (e) => {
+        uiState.setType(e.target.value);
+    });
+    
+    // Form fields
+    document.getElementById('username').addEventListener('input', (e) => {
+        form.updateField('username', e.target.value);
+    });
+    
+    document.getElementById('service').addEventListener('change', (e) => {
+        form.updateField('service', e.target.value);
+    });
+    
+    // Submit button
+    document.getElementById('submitBtn').addEventListener('click', () => {
+        form.submit();
+        
+        // Update UI based on phase
+        if (form.state.phase === 'completed') {
+            document.getElementById('registrationPhase').style.display = 'none';
+            document.getElementById('completionPhase').style.display = 'block';
+        }
+    });
+    
+    // Display errors
+    const displayErrors = () => {
+        const existingErrors = document.querySelector('.error-message');
+        if (existingErrors) existingErrors.remove();
+        
+        if (form.state.errors.length > 0) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.innerHTML = form.state.errors.map(err => `<p>${err}</p>`).join('');
+            document.getElementById('registrationPhase').prepend(errorDiv);
+        }
+    };
+    
+    // Watch for validation errors
+    setInterval(() => {
+        if (form.state.errors.length > 0) {
+            displayErrors();
+        }
+    }, 100);
+});
+
+// ===== FUD Mitigation =====
+setInterval(() => {
+    const score = globalTelemetry.getScore();
+    if (score < 70 && !uiState.state.hasDisability) {
+        // Suggest enabling accessibility mode
+        const suggestion = document.createElement('div');
+        suggestion.className = 'error-message';
+        suggestion.innerHTML = `
+            <p>We noticed you might be having difficulties. 
+            Would you like to <a href="#" onclick="document.getElementById('accessibilityMode').click(); return false;">enable accessibility mode</a>?</p>
+        `;
+        
+        if (!document.querySelector('.suggestion')) {
+            suggestion.classList.add('suggestion');
+            document.querySelector('.accessibility-controls').appendChild(suggestion);
+        }
+    }
+}, 5000);
+    </script>
+</body>
+</html>
