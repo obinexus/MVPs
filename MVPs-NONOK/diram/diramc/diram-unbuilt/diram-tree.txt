@@ -1,0 +1,79 @@
+.
+├── build
+│   └── release
+│       ├── bin
+│       │   ├── diram
+│       │   └── examples
+│       ├── config
+│       │   └── diram.drc
+│       ├── lib
+│       │   ├── libdiram.a
+│       │   ├── libdiram.so -> libdiram.so.1
+│       │   └── libdiram.so.1
+│       └── obj
+│           ├── cli
+│           │   └── main.o
+│           ├── core
+│           │   ├── config
+│           │   │   └── config.o
+│           │   └── feature-alloc
+│           │       ├── alloc.o
+│           │       └── feature_alloc.o
+│           ├── examples
+│           │   └── diram
+│           │       └── cache-resolution-lookahead
+│           └── test_core
+│               └── alloc
+├── diram.drc
+├── diram.drc.in.xml
+├── diram-tree.txt
+├── docs
+│   └── DIRAM_PLAN.md
+├── examples
+│   ├── hotwire_example.c
+│   └── small-talk.s
+├── include
+│   └── diram
+│       └── core
+│           ├── config
+│           │   └── config.h
+│           ├── feature-alloc
+│           │   ├── alloc.h
+│           │   ├── async_promise.h
+│           │   └── feature_alloc.h
+│           ├── hotwire
+│           │   └── hotwire.h
+│           └── parser
+│               ├── ast.h
+│               ├── parser.h
+│               └── tokenizer.h
+├── logs
+│   ├── alloc_trace.log
+│   └── diram_errors.log
+├── Makefile
+├── Makefile.hotwire
+├── README.md
+├── README.pdf
+├── src
+│   ├── cli
+│   │   └── main.c
+│   └── core
+│       ├── assembly
+│       │   ├── nasm_pipeline.c
+│       │   └── smod_loader.c
+│       ├── config
+│       │   └── config.c
+│       ├── feature-alloc
+│       │   ├── alloc.c
+│       │   ├── async_promise.c
+│       │   ├── cache_lookahead.c
+│       │   └── feature_alloc.c
+│       └── hotwire
+│           ├── asm_visitor.c
+│           └── wasm_visitor.c
+└── tests
+    └── core
+        └── alloc
+            └── test_alloc.c
+
+37 directories, 40 files

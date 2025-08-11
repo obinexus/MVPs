@@ -1,0 +1,10 @@
+prefix=/home/obinexus/obinexus/MVPs/rift-N/poc/gov
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: rift-0
+Description: RIFT Compiler Stage 0 Library - AEGIS Methodology Compliance
+Version: 1.6.0
+Libs: -L${libdir} -lrift-0
+Cflags: -I${includedir}

@@ -1,0 +1,4 @@
+# DIRAM Configuration
+version=76d0881-dirty
+sinphase_threshold=0.5
+governance_level=standard

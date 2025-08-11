@@ -1,0 +1,39 @@
+{
+    "configVersion": "0.1.0",
+    "security": {
+      "secureMemory": true,
+      "quantumResistant": false,
+      "strictValidation": true,
+      "saltLength": 32,
+      "allowedAlgorithms": ["SHA256", "SHA512"]
+    },
+    "crypto": {
+      "defaultHashAlgorithm": "SHA512",
+      "defaultKdfAlgorithm": "PBKDF2_HMAC_SHA512",
+      "defaultIterations": 600000,
+      "defaultMemorySize": 65536,
+      "defaultOutputLength": 32
+    },
+    "storage": {
+      "storagePath": "./zero-data",
+      "encryptStorage": true,
+      "fileFormat": "TEXT",
+      "maxFileSize": 10485760
+    },
+    "encoding": {
+      "defaultSeparator": ".",
+      "encodingSize": 62,
+      "defaultAlgorithm": "PBKDF2_HMAC_SHA512"
+    },
+    "network": {
+      "defaultTimeout": 30000,
+      "maxRetries": 3,
+      "retryDelay": 1000
+    },
+    "timeouts": {
+      "idExpiration": 0,
+      "keyExpiration": 7776000000,
+      "challengeExpiration": 300000,
+      "proofExpiration": 900000
+    }
+  }

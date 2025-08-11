@@ -1,0 +1,20 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Shield Background -->
+    <path d="M256 20L96 100V260C96 360 176 450 256 492C336 450 416 360 416 260V100L256 20Z" fill="#1E1E2E" stroke="#A0A0B0"/>
+    
+    <!-- Keyhole -->
+    <circle cx="256" cy="200" r="40" fill="#A0A0B0" stroke="#FFFFFF"/>
+    <rect x="246" y="240" width="20" height="50" rx="10" fill="#A0A0B0" stroke="#FFFFFF"/>
+    
+    <!-- Stylized Zero -->
+    <path d="M200 300C200 270 230 250 256 250C282 250 312 270 312 300C312 330 282 350 256 350C230 350 200 330 200 300Z" fill="#3A3A5A" stroke="#A0A0B0"/>
+    
+    <!-- Circuit Elements -->
+    <line x1="130" y1="180" x2="180" y2="220" stroke="#A0A0B0"/>
+    <line x1="380" y1="180" x2="330" y2="220" stroke="#A0A0B0"/>
+    <line x1="200" y1="350" x2="150" y2="400" stroke="#A0A0B0"/>
+    <line x1="312" y1="350" x2="362" y2="400" stroke="#A0A0B0"/>
+    
+    <!-- Node-Zero Text -->
+    <text x="50%" y="480" font-size="40" fill="#A0A0B0" text-anchor="middle" font-family="Arial, sans-serif">NODE-ZERO</text>
+</svg>
