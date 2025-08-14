@@ -1,0 +1,68 @@
+.
+├── build
+│   └── src
+│       └── demo
+│           └── dop_demo.o
+├── CMakeLists.txt
+├── CMakeLists.txt.in
+├── docs
+│   ├── git-raf
+│   │   ├── Enhanced Chapter 6_ Git-RAF Integration.pdf
+│   │   └── OBINexus Zero Trust Topology UML Architecture.pdf
+│   ├── gov_clock_readme.md
+│   ├── obinexus_cmake_build_system.md
+│   └── obinexus_zero_trust_topology.md
+├── examples
+│   └── time_components_manifest.xml
+├── gov-clock-for-semverx.txt
+├── include
+│   ├── dop_adapter.h
+│   ├── dop_manifest.h
+│   ├── dop_topology.h
+│   ├── nexus_link_semserver_x.h
+│   ├── obinexus_dop_core.c
+│   ├── obinexus_dop_core.h
+│   └── taxonomy_testing.h
+├── (isolated)
+│   └── obinexus_dop_c_implementation.c
+├── Makefile
+├── Makefile.xml.in
+├── makes
+│   ├── CMakeLists.txt.old
+│   ├── Makefile
+│   ├── Makefile.backup
+│   ├── Makefile.old
+│   ├── Makefile.old2
+│   ├── Makefile.xml.in
+│   └── Makefile.xml.in.old
+├── README.md
+├── schemas
+│   └── dop_manifest.xsd
+├── scripts
+│   ├── generate_manifest.cmak
+│   ├── generate_manifest.cmake
+│   └── validate_source_to_build.cmake
+├── src
+│   ├── components
+│   │   ├── alarm.c
+│   │   ├── clock.c
+│   │   ├── stopwatch.c
+│   │   └── timer.c
+│   ├── demo
+│   │   └── dop_demo.c
+│   ├── dop_adapter.c
+│   ├── dop_adapter.c.old
+│   ├── dop_manifest.c
+│   ├── dop_manifest.c.old
+│   ├── dop_manifest.c.OLD1
+│   ├── dop_topology.c
+│   ├── dop_topology.c.old
+│   ├── obinexus_dop_core.c
+│   ├── obinexus_dop_core - Copy.c:Zone.Identifier
+│   └── taxonomy_testing.c
+├── test_manifest.xml
+├── tests
+│   └── test_components.c
+└── TODO.md
+
+16 directories, 50 files
