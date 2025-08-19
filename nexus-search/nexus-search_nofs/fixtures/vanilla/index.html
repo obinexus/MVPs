@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusSearch - Document Search</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+    
+    <!-- External Script -->
+    <script src="../../dist/index.umd.js"></script>
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <div class="search-container">
+        <h1>NexusSearch</h1>
+        <p>Upload Markdown (.md) or HTML files to search their contents</p>
+        
+        <!-- File Input -->
+        <input 
+            type="file" 
+            class="file-input" 
+            multiple 
+            accept=".md,.html" 
+            aria-label="Upload documents to search"
+        >
+        
+        <!-- Search Input -->
+        <input 
+            type="search" 
+            class="search-input" 
+            placeholder="Search uploaded documents..." 
+            aria-label="Search documents"
+        >
+        
+        <!-- Loading Indicator -->
+        <div 
+            class="loading-spinner" 
+            role="status" 
+            aria-hidden="true"
+        >
+            Loading documents...
+        </div>
+        
+        <!-- Error Message Container -->
+        <div 
+            class="error-message" 
+            role="alert" 
+            aria-live="assertive"
+        >
+            <!-- Dynamic error messages will appear here -->
+        </div>
+        
+        <!-- No Results Indicator -->
+        <div 
+            class="no-results" 
+            role="status" 
+            aria-live="polite"
+        >
+            No matching documents found
+        </div>
+        
+        <!-- Search Results Container -->
+        <div 
+            class="search-results" 
+            aria-label="Search results"
+        >
+            <!-- Dynamic search results will appear here -->
+        </div>
+    </div>
+
+    <!-- Main JavaScript -->
+    <script src="./NexusSearchBar.js" type="module"></script>
+</body>
+</html>

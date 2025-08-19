@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "target": "es2018",
+    "module": "esnext",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "declaration": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@core/*": ["src/core/*"],
+      "@algorithms/*": ["src/core/algorithms/*"],
+      "@search/*": ["src/core/search/*"],
+      "@storage/*": ["src/core/storage/*"],
+      "@utils/*": ["src/core/utils/*"],
+      "@documents/*": ["src/core/documents/*"],
+      "@types/*": ["src/core/types/*"],
+      "@telemetry/*": ["src/core/telemetry/*"],
+      "@adapters/*": ["src/core/adapters/*"],
+      "@web/*": ["src/core/web/*"],
+      "@cli/*": ["src/cli/*"]
+    }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+}
