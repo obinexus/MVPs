@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -O2 -fPIC -std=c99
+CFLAGS = -Wall -Wextra -O2 -fPIC -std=c99 -D_POSIX_C_SOURCE=200809L -D_GNU_SOURCE
 LDFLAGS = -shared
 LIBS = -luuid -lm -lrt
 

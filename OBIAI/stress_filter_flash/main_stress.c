@@ -1,11 +1,17 @@
+#define _POSIX_C_SOURCE 200809L
+#define _GNU_SOURCE
+
 #include "stress_filter_flash.h"
 #include <stdio.h>
 #include <unistd.h>
 #include <signal.h>
+#include <stdbool.h>
+#include <string.h>
 
 static volatile bool running = true;
 
 void signal_handler(int sig) {
+    (void)sig; // Suppress unused parameter warning
     running = false;
 }
 
@@ -22,15 +28,21 @@ int main(int argc, char* argv[]) {
     if (argc > 1) {
         if (strcmp(argv[1], "entropy") == 0) {
             stress_system_set_noise_source(sys, NOISE_ENTROPY);
+            printf("Using ENTROPY noise source\n");
         } else if (strcmp(argv[1], "environmental") == 0) {
             stress_system_set_noise_source(sys, NOISE_ENVIRONMENTAL);
+            printf("Using ENVIRONMENTAL noise source\n");
         } else if (strcmp(argv[1], "feedback") == 0) {
             stress_system_set_noise_source(sys, NOISE_FEEDBACK);
+            printf("Using FEEDBACK noise source\n");
+        } else {
+            printf("Using PRNG noise source (default)\n");
         }
+    } else {
+        printf("Using PRNG noise source (default)\n");
     }
     
     printf("StressFilterFlash v1.0 - OBINexus Consciousness Encoding\n");
-    printf("Noise source: %d\n", sys->noise_source);
     printf("Press Ctrl+C to exit\n\n");
     
     double magnitude = 0.3;
