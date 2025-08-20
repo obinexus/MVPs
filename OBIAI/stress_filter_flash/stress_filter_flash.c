@@ -1,6 +1,6 @@
 #define _POSIX_C_SOURCE 200809L
 #define _GNU_SOURCE
-
+#include <math.h>
 #include "stress_filter_flash.h"
 #include <stdlib.h>
 #include <string.h>
