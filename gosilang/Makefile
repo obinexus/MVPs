@@ -13,6 +13,7 @@ BUILD_DIR = build
 OBJ_DIR = $(BUILD_DIR)/obj
 BIN_DIR = $(BUILD_DIR)/bin
 LIB_DIR = $(BUILD_DIR)/lib
+CLI_OBJS = $(BUILDDIR)/obj/cli.o $(BUILDDIR)/obj/tui.o
 
 # Files
 SOURCES = $(wildcard $(SRC_DIR)/*.c)
@@ -36,6 +37,14 @@ $(TARGET): $(OBJECTS)
 # Compile source files
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
+
+CLI_OBJS = $(BUILDDIR)/obj/cli.o $(BUILDDIR)/obj/tui.o
+cli: $(OBJS) $(CLI_OBJS)
+	$(CC) $(OBJS) $(CLI_OBJS) -o $(BUILDDIR)/bin/gosi $(LDFLAGS)
+
+# optional helper
+install-cli: cli
+	ln -sf $(BUILDDIR)/bin/gosi /usr/local/bin/gosi
 
 # Clean build artifacts
 clean:
