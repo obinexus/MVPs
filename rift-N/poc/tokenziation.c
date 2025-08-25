@@ -65,9 +65,11 @@ demonstrate_librift_tokenization()
     printf("-----------------------------------------------------\n");
 
     // Define token patterns for a simple language
-    State *identifier = state_create("^[a-zA-Z_][a-zA-Z0-9_]*$", false);
-    State *number = state_create("^[0-9]+$", false);
-    State *operator = state_create("^[+\\-*/]$", false);  // Fixed syntax error
+    // Define token patterns for a simple language
+State *identifier = state_create("^[a-zA-Z_][a-zA-Z0-9_]*$", false);
+State *number = state_create("^[0-획]+$", false);
+State *operator = state_create("^[-+*/]$", false);  // Minus at beginning
+     // Fixed syntax error
 
     // Test tokens to demonstrate tokenization
     const char *tokens[] = {"x", "+", "123", "*", "y", "42"};
