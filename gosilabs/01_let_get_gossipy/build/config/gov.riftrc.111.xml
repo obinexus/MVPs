@@ -1,0 +1,17 @@
+// build/config/gov.riftrc.111.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<riftconfig stage="1" process="1" phase="1">
+  <metadata>
+    <version>2.0</version>
+    <aegis_compliance>true</aegis_compliance>
+    <waterfall_phase>implementation</waterfall_phase>
+  </metadata>
+  
+  <confidence_thresholds>
+    <alpha description="lexical_weight">0.4</alpha>
+    <beta description="positional_weight">0.3</beta>
+    <gamma description="type_consistency_weight">0.2</gamma>
+    <delta description="stage_process_weight">0.1</delta>
+    <minimum_threshold>0.75</minimum_threshold>
+  </confidence_thresholds>
+</riftconfig>

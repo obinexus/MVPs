@@ -1,0 +1,205 @@
+#define _GNU_SOURCE
+#define _DEFAULT_SOURCE
+#include "token.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+extern FILE *yyin;
+extern TokenList global_tokens;
+extern int lex_and_store();
+
+// ===== TOKEN UTILITIES =====
+const char* token_type_name(TokenType type) {
+    switch(type) {
+        case TOKEN_BANG: return "BANG";
+        case TOKEN_HASH: return "HASH";
+        case TOKEN_ASSIGN: return "ASSIGN";
+        case TOKEN_EQUAL: return "EQUAL";
+        case TOKEN_ARROW: return "ARROW";
+        case TOKEN_LPAREN: return "LPAREN";
+        case TOKEN_RPAREN: return "RPAREN";
+        case TOKEN_LT: return "LT";
+        case TOKEN_GT: return "GT";
+        case TOKEN_LBRACKET: return "LBRACKET";
+        case TOKEN_RBRACKET: return "RBRACKET";
+        case TOKEN_LBRACE: return "LBRACE";
+        case TOKEN_RBRACE: return "RBRACE";
+        case TOKEN_COMMA: return "COMMA";
+        case TOKEN_COLON: return "COLON";
+        case TOKEN_SEMICOLON: return "SEMICOLON";
+        case TOKEN_DOT_DOT: return "DOT_DOT";
+        case TOKEN_DEF: return "DEF";
+        case TOKEN_BIND: return "BIND";
+        case TOKEN_UNBIND: return "UNBIND";
+        case TOKEN_SPAN: return "SPAN";
+        case TOKEN_RANGE: return "RANGE";
+        case TOKEN_VEC: return "VEC";
+        case TOKEN_NIL: return "NIL";
+        case TOKEN_NULL: return "NULL";
+        case TOKEN_LET: return "LET";
+        case TOKEN_IDENTIFIER: return "IDENTIFIER";
+        case TOKEN_INTEGER: return "INTEGER";
+        case TOKEN_FLOAT: return "FLOAT";
+        case TOKEN_NEWLINE: return "NEWLINE";
+        case TOKEN_EOF: return "EOF";
+        case TOKEN_UNKNOWN: return "UNKNOWN";
+        default: return "INVALID";
+    }
+}
+
+Token create_token(TokenType type, const char *lexeme, Position pos) {
+    Token token;
+    token.type = type;
+    token.lexeme = strdup(lexeme ? lexeme : "");
+    token.pos = pos;
+    token.value.int_val = 0; // default
+    return token;
+}
+
+void token_list_init(TokenList *list) {
+    list->tokens = malloc(sizeof(Token) * 32);
+    list->count = 0;
+    list->capacity = 32;
+}
+
+void token_list_add(TokenList *list, Token token) {
+    if (list->count >= list->capacity) {
+        list->capacity *= 2;
+        list->tokens = realloc(list->tokens, sizeof(Token) * list->capacity);
+    }
+    list->tokens[list->count++] = token;
+}
+
+void token_list_free(TokenList *list) {
+    for (size_t i = 0; i < list->count; i++) {
+        free(list->tokens[i].lexeme);
+    }
+    free(list->tokens);
+    list->tokens = NULL;
+    list->count = 0;
+    list->capacity = 0;
+}
+
+void print_token_table(const Token *token) {
+    printf("| %-12s | %-15s | %4d:%-2d |\n", 
+           token_type_name(token->type),
+           token->lexeme,
+           token->pos.line, token->pos.column);
+}
+
+// ===== PIPELINE STAGES =====
+
+void stage1_raw_lexemes(const char *filename) {
+    printf("\n=== STAGE 1: Raw Lexemes ===\n");
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        perror("Cannot open file");
+        return;
+    }
+    
+    printf("Raw file content:\n");
+    printf("─────────────────\n");
+    char buffer[1024];
+    while (fgets(buffer, sizeof(buffer), file)) {
+        printf("%s", buffer);
+    }
+    printf("─────────────────\n");
+    fclose(file);
+}
+
+void stage2_token_stream(const char *filename) {
+    printf("\n=== STAGE 2: Token Stream ===\n");
+    
+    yyin = fopen(filename, "r");
+    if (!yyin) {
+        perror("Cannot open file");
+        return;
+    }
+    
+    int token_count = lex_and_store();
+    fclose(yyin);
+    
+    printf("Generated %d tokens:\n\n", token_count);
+    
+    // Table format
+    printf("Token Table:\n");
+    printf("┌─────────────┬─────────────────┬─────────┐\n");
+    printf("│ Token Type  │ Lexeme          │ Pos     │\n");
+    printf("├─────────────┼─────────────────┼─────────┤\n");
+    
+    for (size_t i = 0; i < global_tokens.count; i++) {
+        print_token_table(&global_tokens.tokens[i]);
+    }
+    printf("└─────────────┴─────────────────┴─────────┘\n");
+}
+
+void stage3_ast_preview() {
+    printf("\n=== STAGE 3: AST Preview ===\n");
+    printf("(Parser will build AST nodes from token stream)\n\n");
+    
+    // Mock AST analysis of token patterns
+    printf("Detected patterns:\n");
+    for (size_t i = 0; i < global_tokens.count; i++) {
+        Token *token = &global_tokens.tokens[i];
+        
+        if (token->type == TOKEN_BANG) {
+            printf("→ Invocation pattern starting at %d:%d\n", 
+                   token->pos.line, token->pos.column);
+        }
+        if (token->type == TOKEN_BIND || token->type == TOKEN_UNBIND) {
+            printf("→ Bind operation at %d:%d\n", 
+                   token->pos.line, token->pos.column);
+        }
+        if (token->type == TOKEN_VEC) {
+            printf("→ Vector construction at %d:%d\n", 
+                   token->pos.line, token->pos.column);
+        }
+    }
+}
+
+void stage4_codegen_preview() {
+    printf("\n=== STAGE 4: Codegen Preview ===\n");
+    printf("(Will generate C skeleton from AST)\n\n");
+    
+    printf("Expected C output patterns:\n");
+    printf("• #bind() → parallel_diff() calls\n");
+    printf("• !vec<N>() → vec_make() + norm() calls\n");
+    printf("• span[..] → normalize_to_span() calls\n");
+    printf("• NIL handling → NaN or NIL_PTR checks\n");
+}
+
+// ===== MAIN PIPELINE =====
+
+int main(int argc, char **argv) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <file.gs> [--tokens|--raw|--all]\n", argv[0]);
+        return 1;
+    }
+    
+    const char *filename = argv[1];
+    const char *output_mode = (argc > 2) ? argv[2] : "--all";
+    
+    printf("🔧 Gosilang MVP Lexer Pipeline\n");
+    printf("📄 Processing: %s\n", filename);
+    printf("🎯 OBINexus Computing - Services from the Heart ❤️\n");
+    
+    if (strcmp(output_mode, "--all") == 0) {
+        stage1_raw_lexemes(filename);
+        stage2_token_stream(filename);
+        stage3_ast_preview();
+        stage4_codegen_preview();
+    } else if (strcmp(output_mode, "--tokens") == 0) {
+        stage2_token_stream(filename);
+    } else if (strcmp(output_mode, "--raw") == 0) {
+        stage1_raw_lexemes(filename);
+    }
+    
+    // Cleanup
+    token_list_free(&global_tokens);
+    
+    printf("\n✅ Pipeline complete - ready for Phase 2 (Parser)\n");
+    printf("#hacc #noghosting #sorrynotsorry\n");
+    
+    return 0;
+}
