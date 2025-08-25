@@ -13,6 +13,8 @@
 #include <openssl/sha.h>
 #include <openssl/ec.h>
 #include <openssl/evp.h>
+#include "aura256.h"
+#include "pigeonhole.h"
 
 /* ---------- 1. SENTINELS ---------- */
 #define NIL   ((double)NAN)
@@ -145,7 +147,37 @@ static void repl(void) {
             vec_t u=vec(n,uvals);
             parallel_bind(everything, &u);
             free(u.v);
-        } else puts("unknown");
+        } else if (tok && !strcmp(tok, "aura")) {
+    // Test AuraSeal with Bayesian security
+    double priv[3] = {1.23, 4.56, 7.89};
+    double pub = 42.0;
+    aura256_t seal;
+    aura256_seal(priv, pub, seal);
+    
+    // Check for collisions
+    bool collision = ph_mark(seal);
+    
+    // Bayesian security assessment
+    bayes_security_t bs = {
+        .prior_secure = 0.001,   // 0.1% base rate
+        .likelihood = 0.999,     // 99.9% match if secure
+        .evidence = 0.089        // 8.9% total digest chance
+    };
+    
+    double security_score = bayes_update(&bs, !collision);
+    
+    printf("AuraSeal = ");
+    for(int i = 0; i < 32; i++) printf("%02x", seal[i]);
+    printf("\n");
+    printf("Collision: %s\n", collision ? "YES (NIL)" : "NO (NULL)");
+    printf("Security Score: %.4f\n", security_score);
+}
+else if (tok && !strcmp(tok, "pigeonhole")) {
+    free(tok);
+    ph_analyze_collisions();
+}
+
+     else puts("unknown");
     }
 }
 
