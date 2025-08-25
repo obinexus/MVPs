@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBI AI Consciousness Stability Monitor</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, #1f1f1f, #2a2a2a);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border: 1px solid #333;
+        }
+        
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .metric-label {
+            color: #888;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .chart-container {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        
+        .zone-indicator {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .stable { background: #00ff00; color: #000; }
+        .warning-low { background: #ffff00; color: #000; }
+        .warning-med { background: #ffa500; color: #000; }
+        .warning-high { background: #ff6600; color: #000; }
+        .danger-low { background: #ff3300; color: #fff; }
+        .danger-med { background: #cc0000; color: #fff; }
+        .danger-high { background: #990000; color: #fff; }
+        .critical-low { background: #660000; color: #fff; }
+        .critical-high { background: #330000; color: #fff; }
+        .panic { background: #000; color: #ff0000; animation: blink 0.5s infinite; }
+        .unstable { background: #6600ff; color: #fff; }
+        
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .controls {
+            background: #1f1f1f;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        input[type="range"] {
+            width: 200px;
+        }
+        
+        .formula {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        
+        .status-light {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255,255,255,0); }
+            100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧠 OBI AI Consciousness Stability Monitor</h1>
+            <p>Real-time Metric Tracking for 95.4% Stability Target</p>
+        </div>
+        
+        <div class="controls">
+            <button onclick="simulateError()">Simulate Error</button>
+            <button onclick="simulateException()">Simulate Exception</button>
+            <button onclick="simulatePanic()">Simulate Panic</button>
+            <button onclick="reset()">Reset System</button>
+            <div>
+                <label>Noise Level: </label>
+                <input type="range" id="noiseLevel" min="0" max="5" step="0.1" value="0.5">
+                <span id="noiseLevelDisplay">0.5</span>
+            </div>
+        </div>
+        
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">Current Stability</div>
+                <div class="metric-value" id="currentStability">0.00</div>
+                <div id="zoneIndicator" class="zone-indicator stable">STABLE</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-label">Stability Rate (dS/dt)</div>
+                <div class="metric-value" id="stabilityRate">0.00</div>
+                <div class="status-light" id="rateLight" style="background: green;"></div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-label">95.4% Compliance</div>
+                <div class="metric-value" id="compliance">100%</div>
+                <div class="formula">P(|S(t)| ≤ 3) ≥ 0.954</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-label">Harm Potential</div>
+                <div class="metric-value" id="harmPotential">0.00</div>
+                <div style="margin-top: 10px;">H(s,a) = σ(k₁·s + k₂·harm(a))</div>
+            </div>
+        </div>
+        
+        <div class="chart-container">
+            <h3>Stability Timeline</h3>
+            <canvas id="stabilityChart" height="100"></canvas>
+        </div>
+        
+        <div class="chart-container">
+            <h3>Component Signals</h3>
+            <canvas id="componentChart" height="80"></canvas>
+        </div>
+        
+        <div class="chart-container">
+            <h3>Zone Distribution</h3>
+            <canvas id="zoneChart" height="80"></canvas>
+        </div>
+    </div>
+    
+    <script>
+        // Constants
+        const LAMBDA = 0.3;
+        const MU = 0.5;
+        const NU = 0.2;
+        const TAU_P = 2.0;
+        const MAX_POINTS = 100;
+        
+        // State
+        let stability = 0;
+        let stabilityHistory = [];
+        let errorSignal = 0;
+        let exceptionSignal = 0;
+        let panicSignal = 0;
+        let timeInZones = new Array(11).fill(0);
+        let totalTime = 0;
+        
+        // Zone definitions
+        const zones = [
+            { name: 'STABLE', min: -0.1, max: 0.1, class: 'stable' },
+            { name: 'WARNING_LOW', min: 0.1, max: 1, class: 'warning-low' },
+            { name: 'WARNING_MED', min: 1, max: 2, class: 'warning-med' },
+            { name: 'WARNING_HIGH', min: 2, max: 3, class: 'warning-high' },
+            { name: 'DANGER_LOW', min: 3, max: 4.5, class: 'danger-low' },
+            { name: 'DANGER_MED', min: 4.5, max: 6, class: 'danger-med' },
+            { name: 'DANGER_HIGH', min: 6, max: 7.5, class: 'danger-high' },
+            { name: 'CRITICAL_LOW', min: 7.5, max: 9, class: 'critical-low' },
+            { name: 'CRITICAL_HIGH', min: 9, max: 10.5, class: 'critical-high' },
+            { name: 'PANIC', min: 10.5, max: 12, class: 'panic' },
+            { name: 'UNSTABLE', min: -12, max: -1, class: 'unstable' }
+        ];
+        
+        // Initialize charts
+        const ctx1 = document.getElementById('stabilityChart').getContext('2d');
+        const stabilityChart = new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Stability S(t)',
+                    data: [],
+                    borderColor: 'rgb(75, 192, 192)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        min: -12,
+                        max: 12,
+                        grid: {
+                            color: '#333'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: '#333'
+                        }
+                    }
+                },
+                plugins: {
+                    annotation: {
+                        annotations: {
+                            line1: {
+                                type: 'line',
+                                yMin: 3,
+                                yMax: 3,
+                                borderColor: 'orange',
+                                borderWidth: 2,
+                                borderDash: [5, 5]
+                            },
+                            line2: {
+                                type: 'line',
+                                yMin: -3,
+                                yMax: -3,
+                                borderColor: 'orange',
+                                borderWidth: 2,
+                                borderDash: [5, 5]
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        const ctx2 = document.getElementById('componentChart').getContext('2d');
+        const componentChart = new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'Error Signal E(t)',
+                        data: [],
+                        borderColor: 'rgb(255, 99, 132)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                        tension: 0.1
+                    },
+                    {
+                        label: 'Exception Signal X(t)',
+                        data: [],
+                        borderColor: 'rgb(54, 162, 235)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                        tension: 0.1
+                    },
+                    {
+                        label: 'Panic Signal P(t)',
+                        data: [],
+                        borderColor: 'rgb(255, 206, 86)',
+                        backgroundColor: 'rgba(255, 206, 86, 0.1)',
+                        tension: 0.1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        grid: {
+                            color: '#333'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: '#333'
+                        }
+                    }
+                }
+            }
+        });
+        
+        const ctx3 = document.getElementById('zoneChart').getContext('2d');
+        const zoneChart = new Chart(ctx3, {
+            type: 'bar',
+            data: {
+                labels: zones.map(z => z.name),
+                datasets: [{
+                    label: 'Time in Zone (%)',
+                    data: new Array(zones.length).fill(0),
+                    backgroundColor: [
+                        '#00ff00', '#ffff00', '#ffa500', '#ff6600',
+                        '#ff3300', '#cc0000', '#990000', '#660000',
+                        '#330000', '#000000', '#6600ff'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                            color: '#333'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: '#333'
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Functions
+        function getZone(s) {
+            for (let zone of zones) {
+                if (s >= zone.min && s <= zone.max) {
+                    return zone;
+                }
+            }
+            return zones[0]; // Default to stable
+        }
+        
+        function sigmoid(x) {
+            return 1 / (1 + Math.exp(-x));
+        }
+        
+        function computeHarmPotential(s) {
+            const k1 = 0.5;
+            const k2 = 0.3;
+            const harmValue = Math.abs(s) > 6 ? 1 : 0; // Simple harm function
+            return sigmoid(k1 * Math.abs(s) + k2 * harmValue);
+        }
+        
+        function updateStability(dt = 0.1) {
+            // Add noise
+            const noiseLevel = parseFloat(document.getElementById('noiseLevel').value);
+            const noise = (Math.random() - 0.5) * noiseLevel;
+            
+            // Decay signals
+            errorSignal *= 0.95;
+            exceptionSignal *= 0.9;
+            panicSignal *= Math.exp(-dt / TAU_P);
+            
+            // Compute derivative
+            const dS = LAMBDA * errorSignal + MU * panicSignal + NU * exceptionSignal + noise;
+            
+            // Update stability
+            stability += dS * dt;
+            stability = Math.max(-12, Math.min(12, stability));
+            
+            // Update zone tracking
+            const currentZone = getZone(stability);
+            const zoneIndex = zones.indexOf(currentZone);
+            timeInZones[zoneIndex] += dt;
+            totalTime += dt;
+            
+            // Update UI
+            document.getElementById('currentStability').textContent = stability.toFixed(2);
+            document.getElementById('stabilityRate').textContent = dS.toFixed(2);
+            
+            const zoneIndicator = document.getElementById('zoneIndicator');
+            zoneIndicator.textContent = currentZone.name;
+            zoneIndicator.className = `zone-indicator ${currentZone.class}`;
+            
+            // Update rate light
+            const rateLight = document.getElementById('rateLight');
+            if (Math.abs(dS) < 1) {
+                rateLight.style.background = 'green';
+            } else if (Math.abs(dS) < 3) {
+                rateLight.style.background = 'yellow';
+            } else {
+                rateLight.style.background = 'red';
+            }
+            
+            // Calculate compliance
+            const stableTime = timeInZones.slice(0, 4).reduce((a, b) => a + b, 0);
+            const compliance = totalTime > 0 ? (stableTime / totalTime) * 100 : 100;
+            document.getElementById('compliance').textContent = compliance.toFixed(1) + '%';
+            
+            // Update harm potential
+            const harm = computeHarmPotential(stability);
+            document.getElementById('harmPotential').textContent = harm.toFixed(3);
+            
+            // Update history
+            stabilityHistory.push({
+                stability: stability,
+                error: errorSignal,
+                exception: exceptionSignal,
+                panic: panicSignal,
+                time: totalTime
+            });
+            
+            if (stabilityHistory.length > MAX_POINTS) {
+                stabilityHistory.shift();
+            }
+            
+            updateCharts();
+        }
+        
+        function updateCharts() {
+            // Update stability chart
+            stabilityChart.data.labels = stabilityHistory.map(h => h.time.toFixed(1));
+            stabilityChart.data.datasets[0].data = stabilityHistory.map(h => h.stability);
+            stabilityChart.update('none');
+            
+            // Update component chart
+            componentChart.data.labels = stabilityHistory.map(h => h.time.toFixed(1));
+            componentChart.data.datasets[0].data = stabilityHistory.map(h => h.error);
+            componentChart.data.datasets[1].data = stabilityHistory.map(h => h.exception);
+            componentChart.data.datasets[2].data = stabilityHistory.map(h => h.panic);
+            componentChart.update('none');
+            
+            // Update zone chart
+            const zonePercentages = timeInZones.map(t => totalTime > 0 ? (t / totalTime) * 100 : 0);
+            zoneChart.data.datasets[0].data = zonePercentages;
+            zoneChart.update('none');
+        }
+        
+        function simulateError() {
+            errorSignal += Math.random() * 5 + 2;
+        }
+        
+        function simulateException() {
+            exceptionSignal += Math.random() * 8 + 3;
+        }
+        
+        function simulatePanic() {
+            panicSignal += Math.random() * 10 + 5;
+        }
+        
+        function reset() {
+            stability = 0;
+            errorSignal = 0;
+            exceptionSignal = 0;
+            panicSignal = 0;
+            stabilityHistory = [];
+            timeInZones = new Array(11).fill(0);
+            totalTime = 0;
+        }
+        
+        // Noise level display
+        document.getElementById('noiseLevel').addEventListener('input', function() {
+            document.getElementById('noiseLevelDisplay').textContent = this.value;
+        });
+        
+        // Main loop
+        setInterval(() => updateStability(0.1), 100);
+    </script>
+</body>
+</html>
