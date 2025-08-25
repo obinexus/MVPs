@@ -5,10 +5,12 @@
  *  • error policy 0-12   (zero-propagation)
  *  • never dies          (graceful detach on ^C)
  */
+#define _POSIX_C_SOURCE 199309L   /* before any #include */
+#include <time.h>                 /* declares nanosleep */
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
-#include <time.h>
+
 
 #define MAX_N 1<<20          /* 1 M intervals – O(n) space */
 #define OK    0
