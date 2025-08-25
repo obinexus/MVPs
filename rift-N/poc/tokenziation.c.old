@@ -65,9 +65,9 @@ demonstrate_librift_tokenization()
     printf("-----------------------------------------------------\n");
 
     // Define token patterns for a simple language
-    State *identifier = state_create("^[a-zA-Z_][a-zA-Z0-9_]*$", false);
-    State *number = state_create("^[0-9]+$", false);
-    State *operator = state_create("^[+\\-*/]$", false);  // Fixed syntax error
+    State *identifier = state_create("^[a-zA-Z_]\\w*$", false);
+    State *number = state_create("^\\d+$", false);
+    State *operator= state_create("^[+\\-*/]$", false);
 
     // Test tokens to demonstrate tokenization
     const char *tokens[] = {"x", "+", "123", "*", "y", "42"};
@@ -78,11 +78,15 @@ demonstrate_librift_tokenization()
         const char *token = tokens[i];
 
         // Determine token type
+        State *matching_state = NULL;
         if (state_matches(identifier, token)) {
+            matching_state = identifier;
             printf("Token: %-5s | Type: Identifier\n", token);
         } else if (state_matches(number, token)) {
+            matching_state = number;
             printf("Token: %-5s | Type: Number\n", token);
         } else if (state_matches(operator, token)) {
+            matching_state = operator;
             printf("Token: %-5s | Type: Operator\n", token);
         } else {
             printf("Token: %-5s | Type: Unknown\n", token);
