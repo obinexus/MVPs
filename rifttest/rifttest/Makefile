@@ -10,7 +10,7 @@
 
 # Compiler settings
 CC = gcc
-CFLAGS = -std=c19 -O3 -Wall -Wextra -pedantic
+CFLAGS = -std=c17 -O3 -Wall -Wextra -pedantic
 LDFLAGS = -pthread
 LIBS_CRYPTO = -lcrypto -lsodium
 LIBS_REGEX = -lregex
