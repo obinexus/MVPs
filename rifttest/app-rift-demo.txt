@@ -1,0 +1,236 @@
+// app.rift - OBINexus Polyglot Cultural Preservation System
+// URI: service.preserve.obinexus.culture.division.uk.org
+// Purpose: Demonstrate RIFT language with Nsibidi symbol integration
+
+@seal { 
+    policy: "obinexus.constitutional.v1",
+    level: "foundation",
+    articles: ["3", "8"],
+    housing_act: "1996.s202"
+}
+
+// Import Nsibidi Language Model
+rift import nsibidi.nlm as nlm;
+rift import obinexus.governance as gov;
+rift import rift.validation as val;
+
+// Define service metadata
+@gate (article_8 && no_ghosting) {
+    rift service CulturalPreservation {
+        uri: "service.preserve.obinexus.culture.division.uk.org",
+        version: "1.0.0",
+        compliance: ["GDPR", "HousingAct1996", "HumanRightsAct"],
+        audit_level: "maximum"
+    };
+}
+
+// Nsibidi symbol mappings with XYZ color space
+rift nsibidi_symbols {
+    // Core emotional symbols
+    love:      { glyph: U+DB8F_DCF7, xyz: [0.83, 0.65, 0.42], semantic: "affection" },
+    judgement: { glyph: U+DB8F_DCF8, xyz: [0.91, 0.70, 0.55], semantic: "wisdom" },
+    peace:     { glyph: U+DB8F_DCF9, xyz: [0.72, 0.80, 0.65], semantic: "harmony" },
+    strength:  { glyph: U+DB8F_DCFA, xyz: [0.95, 0.45, 0.35], semantic: "power" },
+    
+    // Governance symbols
+    council:   { glyph: U+DB8F_DCFB, xyz: [0.88, 0.75, 0.50], semantic: "collective" },
+    law:       { glyph: U+DB8F_DCFC, xyz: [0.90, 0.82, 0.60], semantic: "order" },
+    home:      { glyph: U+DB8F_DCFD, xyz: [0.75, 0.70, 0.55], semantic: "shelter" },
+    
+    // Ritual symbols
+    ancestor:  { glyph: U+DB8F_DCFE, xyz: [0.80, 0.60, 0.45], semantic: "heritage" },
+    offering:  { glyph: U+DB8F_DCFF, xyz: [0.85, 0.78, 0.48], semantic: "gift" }
+};
+
+// Cultural context preservation
+@gate (housing_act && article_3) {
+    rift flow preserve_cultural_context(input_text, symbol_context) {
+        validate input: {
+            // Ensure no degrading treatment in text
+            val.check_article_3(input_text);
+            
+            // Verify privacy compliance
+            val.check_article_8(input_text);
+        };
+        
+        // Map text to Nsibidi symbols
+        nsibidi mapped_symbols = nlm.map_semantic_concepts(
+            text: input_text,
+            context: symbol_context,
+            preserve_nuance: true
+        );
+        
+        // Validate cultural appropriateness
+        flow validate_cultural_usage {
+            foreach symbol in mapped_symbols {
+                if (symbol.semantic == "judgement" && 
+                    context.ritual_level < 3) {
+                    seal violation: "judgement_symbol_misuse";
+                    return error("Judgement symbol requires ritual context");
+                }
+            }
+        };
+        
+        // Generate preservation record
+        seal record: {
+            timestamp: obinexus.time.now(),
+            symbols: mapped_symbols,
+            context: symbol_context,
+            compliance_check: "passed"
+        };
+        
+        return {
+            preserved_text: input_text,
+            symbol_mapping: mapped_symbols,
+            audit_trail: record.hash()
+        };
+    }
+}
+
+// Housing rights integration
+@gate (housing_act) {
+    rift flow check_housing_compliance(application_data) {
+        validate housing_status: {
+            // Check for vulnerability markers
+            if (application_data.contains("homeless") ||
+                application_data.contains("eviction")) {
+                
+                // Trigger statutory review
+                seal housing_review: {
+                    type: "section_202_review",
+                    priority: "urgent",
+                    data: application_data,
+                    officer_notification: true
+                };
+                
+                // Preserve dignity (Article 3)
+                flow ensure_dignity {
+                    remove_terms: ["vagrant", "destitute"],
+                    replace_with: ["person experiencing homelessness"]
+                };
+            }
+        };
+        
+        return {
+            review_triggered: true,
+            case_number: housing_review.id,
+            support_resources: gov.get_housing_support()
+        };
+    }
+}
+
+// Polyglot translation service
+@seal { policy: "multilingual_access" } {
+    rift flow translate_with_preservation(source_text, target_langs) {
+        // Detect cultural concepts
+        nsibidi concepts = nlm.extract_cultural_concepts(source_text);
+        
+        // Preserve untranslatable concepts
+        flow preserve_concepts {
+            foreach concept in concepts {
+                if (!concept.translatable) {
+                    // Keep original with explanation
+                    annotation: {
+                        original: concept.term,
+                        explanation: nlm.get_cultural_context(concept),
+                        symbol: nsibidi_symbols[concept.closest_match]
+                    };
+                }
+            }
+        };
+        
+        // Generate translations
+        translations = {};
+        foreach lang in target_langs {
+            translations[lang] = nlm.translate(
+                text: source_text,
+                target: lang,
+                preserve_nsibidi: true,
+                annotations: preserve_concepts.annotations
+            );
+        }
+        
+        return translations;
+    }
+}
+
+// Main application entry
+@gate (article_8 && article_3 && housing_act && no_ghosting) {
+    rift main() {
+        // Initialize governance framework
+        gov.init({
+            foundation_gate: true,
+            aspirational_gate: false,  // Requires manual approval
+            emergency_protocols: true
+        });
+        
+        // Example: Process a cultural preservation request
+        request = {
+            text: "The elders gathered for the judgement ceremony",
+            context: {
+                ritual_level: 4,
+                participants: ["elder_council", "community"],
+                purpose: "dispute_resolution"
+            },
+            languages: ["yoruba", "igbo", "hausa"]
+        };
+        
+        // Preserve and validate
+        preserved = preserve_cultural_context(
+            request.text,
+            request.context
+        );
+        
+        // Check for housing implications
+        if (request.text.contains("shelter") || 
+            request.text.contains("home")) {
+            housing_check = check_housing_compliance(request);
+        }
+        
+        // Translate while preserving cultural concepts
+        translations = translate_with_preservation(
+            request.text,
+            request.languages
+        );
+        
+        // Generate final output with full audit trail
+        seal final_output: {
+            uri: CulturalPreservation.uri,
+            timestamp: obinexus.time.now(),
+            preserved_content: preserved,
+            translations: translations,
+            housing_compliance: housing_check || "N/A",
+            constitutional_compliance: {
+                article_3: "passed",
+                article_8: "passed",
+                housing_act: "passed",
+                no_ghosting: "passed"
+            },
+            aura_seal: gov.generate_seal(this)
+        };
+        
+        // Output result
+        return final_output;
+    }
+}
+
+// Validation hooks for riftest integration
+rift export qa_hooks {
+    pre_compile: [
+        val.check_constitutional_compliance,
+        val.verify_nsibidi_mappings,
+        val.ensure_audit_trail
+    ],
+    
+    post_compile: [
+        val.performance_check,  // <200ms requirement
+        val.thread_safety_check,
+        val.memory_bounds_check
+    ],
+    
+    runtime: [
+        val.monitor_policy_violations,
+        val.track_housing_triggers,
+        val.maintain_audit_log
+    ]
+};
