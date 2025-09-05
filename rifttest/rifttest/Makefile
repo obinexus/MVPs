@@ -131,7 +131,7 @@ test: all
 	@echo "exit" | $(BUILD_DIR)/riftsh -c "pwd" >/dev/null && echo "✓ riftsh: PASS" || echo "✗ riftsh: FAIL"
 
 # Debug build
-debug: CFLAGS = -std=c19 -g -O0 -Wall -Wextra -fsanitize=address -fsanitize=undefined
+debug: CFLAGS = -std=c11 -g -O0 -Wall -Wextra -fsanitize=address -fsanitize=undefined
 debug: clean all
 
 # Static analysis
