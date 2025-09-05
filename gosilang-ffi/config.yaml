@@ -1,0 +1,24 @@
+# gosilang-ffi/config.yaml
+version: "1.0.0"
+namespace: "obinexus.gosilang.ffi"
+
+adapters:
+  semverx_libpolycall:
+    bidirectional: true
+    thread_safe: true
+    validation: "strict"
+    checksum: "sha256"
+
+bindings:
+  languages:
+    - php: { version: "8.0+", driver: "phpgossip" }
+    - python: { version: "3.8+", driver: "pygossip" }
+    - rust: { version: "1.70+", driver: "rustgossip" }
+    - java: { version: "11+", driver: "javagossip" }
+
+disk:
+  import_paths:
+    - "/usr/local/lib/gosilang/disk"
+    - "./local/disk"
+  cache: true
+  restore_context: true
