@@ -1,0 +1,64 @@
+@startuml
+title RIFT Polyglot Tool-chain – "Tomorrow the world sees GOSSLabs"
+
+' ---------- skin ----------
+skinparam componentStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam handwritten true
+
+' ---------- C-core ----------
+component "rift.exe\n(C-core)" as rift #LightBlue
+note right of rift
+  Stage-bound pipeline
+  111→211→311→411→511→611
+  Token triplet: type | memory | value
+  Compile-time safe
+end note
+
+' ---------- QA ----------
+component "riftest\n(C-lib)" as riftest #LightGreen
+note right of riftest
+  Keyway matrix
+  TP/TN/FP/FN gates
+  ψ ≥ 0.8  ⇒ HOTL-ready
+end note
+
+' ---------- Shell ----------
+component "riftsh\nUnix shell" as riftsh #Gold
+note right of riftsh
+  Interactive R-syntax
+  Macro expander
+  State-bound regex
+end note
+
+' ---------- Firmware ----------
+component "riftraf\n(Git-RAF writer)" as riftraf #Orange
+note right of riftraf
+  .raf → silicon
+  Hardware-equivalent bytecode
+  Cultural accessibility layer
+end note
+
+' ---------- macOS bundle ----------
+component "rift.app\nUniversal binary" as riftapp #Coral
+note right of riftapp
+  R"" / R'' subroutines
+  Detach-mode ready
+  Drag-and-drop DSL builder
+end note
+
+' ---------- data flows ----------
+rift -d-> riftest : passes\nbyte-code
+riftest -r-> rift : rollback\non FP/FN
+riftsh ..> rift : drives\nCLI
+riftsh -u-> riftraf : "detach"\ncommand
+riftraf -w-> riftapp : embeds\nfirmware
+riftapp -x-> rift : calls\nruntime
+
+' ---------- slogan ----------
+legend top center
+  #sorrynotsorry – #noghosting – #hacc
+  "First polyglot programming network language"
+endlegend
+
+@enduml
