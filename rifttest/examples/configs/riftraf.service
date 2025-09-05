@@ -1,0 +1,22 @@
+[Unit]
+Description=OBINexus RiftRaf Policy Enforcement
+After=network.target
+
+[Service]
+Type=simple
+User=riftraf
+Group=riftraf
+WorkingDirectory=/var/lib/riftraf
+ExecStart=/usr/local/bin/riftraf --daemon --policy /etc/obinexus/obinexus.json
+Restart=always
+RestartSec=10
+
+# Security
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+NoNewPrivileges=true
+ReadWritePaths=/var/log/obinexus
+
+[Install]
+WantedBy=multi-user.target

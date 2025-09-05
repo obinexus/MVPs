@@ -1,0 +1,47 @@
+{
+  "version": "1.0.0",
+  "symbols": [
+    {
+      "name": "love",
+      "codepoint": "U+DB8FDCF7",
+      "xyz": [0.83, 0.65, 0.42],
+      "semantic": "affection, care, compassion",
+      "cultural_context": "Universal expression of human connection",
+      "usage_restrictions": "none"
+    },
+    {
+      "name": "judgement", 
+      "codepoint": "U+DB8FDCF8",
+      "xyz": [0.91, 0.70, 0.55],
+      "semantic": "wisdom, authority, decision",
+      "cultural_context": "Elder council deliberations",
+      "usage_restrictions": "ritual_level >= 3"
+    },
+    {
+      "name": "shelter",
+      "codepoint": "U+DB8FDCFD",
+      "xyz": [0.75, 0.70, 0.55],
+      "semantic": "home, safety, protection",
+      "cultural_context": "Right to adequate housing",
+      "usage_restrictions": "none"
+    },
+    {
+      "name": "community",
+      "codepoint": "U+DB8FDCFB",
+      "xyz": [0.88, 0.75, 0.50],
+      "semantic": "collective, unity, support",
+      "cultural_context": "Ubuntu - I am because we are",
+      "usage_restrictions": "none"
+    }
+  ],
+  "pending_approval": [
+    {
+      "name": "healing",
+      "proposed_by": "elder_akanni",
+      "codepoint": "U+DB8FDD00",
+      "xyz": [0.70, 0.85, 0.60],
+      "signatures": 2,
+      "required_signatures": 3
+    }
+  ]
+}

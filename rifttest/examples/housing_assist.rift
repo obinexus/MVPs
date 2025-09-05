@@ -1,0 +1,114 @@
+// housing_assist.rift - Housing Assistance Application
+// Demonstrates constitutional compliance in practice
+
+@seal {
+    policy: "obinexus.constitutional.v1",
+    level: "foundation",
+    articles: ["3", "8"],
+    housing_act: "1996.s202"
+}
+
+rift import obinexus.governance as gov;
+rift import obinexus.housing as housing;
+rift import rift.validation as val;
+
+@gate (article_8 && no_ghosting) {
+    rift service HousingAssistance {
+        uri: "service.assist.obinexus.housing.social.uk.org",
+        version: "1.0.0",
+        compliance: ["HousingAct1996", "GDPR", "HumanRightsAct"]
+    };
+}
+
+// Main assistance flow
+@gate (housing_act) {
+    rift flow process_application(applicant_data) {
+        // Validate human dignity (Article 3)
+        validate dignity: {
+            val.check_article_3(applicant_data);
+            
+            // Replace degrading terms
+            applicant_data = val.humanize_language(applicant_data, {
+                "vagrant" -> "person experiencing homelessness",
+                "destitute" -> "person in need of support",
+                "beggar" -> "person seeking assistance"
+            });
+        };
+        
+        // Ensure privacy (Article 8)
+        validate privacy: {
+            if (applicant_data.contains_pii()) {
+                seal encryption: {
+                    algorithm: "ChaCha20-Poly1305",
+                    key_derivation: "Argon2id"
+                };
+                applicant_data = encrypt(applicant_data);
+            }
+        };
+        
+        // Check vulnerability status
+        vulnerability_score = housing.assess_vulnerability({
+            age: applicant_data.age,
+            disabilities: applicant_data.disabilities,
+            dependents: applicant_data.dependents,
+            current_situation: applicant_data.housing_status
+        });
+        
+        // Trigger statutory review if needed
+        if (vulnerability_score >= 7 || 
+            applicant_data.housing_status == "street_homeless") {
+            
+            seal review_trigger: {
+                type: "section_202_statutory_review",
+                priority: "urgent",
+                case_id: housing.generate_case_id(),
+                officer_alert: true,
+                deadline: "5_working_days"
+            };
+            
+            // Immediate temporary accommodation
+            temp_accommodation = housing.find_emergency_shelter({
+                location: applicant_data.current_location,
+                accessibility_needs: applicant_data.disabilities
+            });
+        }
+        
+        // Generate support plan
+        support_plan = housing.create_support_plan({
+            financial_assistance: calculate_housing_benefit(applicant_data),
+            mental_health_support: applicant_data.needs.mental_health,
+            employment_support: applicant_data.needs.employment,
+            family_reunification: applicant_data.family_status
+        });
+        
+        // Create audit trail
+        seal audit_trail: {
+            timestamp: obinexus.time.now(),
+            applicant_ref: applicant_data.reference,
+            decisions_made: support_plan.decisions,
+            constitutional_compliance: {
+                article_3: "passed",
+                article_8: "passed", 
+                housing_act: "review_triggered"
+            }
+        };
+        
+        return {
+            case_id: review_trigger.case_id,
+            immediate_actions: temp_accommodation,
+            support_plan: support_plan,
+            next_steps: housing.get_next_steps(vulnerability_score),
+            rights_information: housing.get_rights_info("en_GB")
+        };
+    }
+}
+
+// QA validation hooks
+rift export housing_qa {
+    validations: [
+        val.no_discrimination_check,
+        val.dignity_preservation,
+        val.privacy_protection,
+        val.audit_completeness
+    ]
+};

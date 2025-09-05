@@ -1,0 +1,48 @@
+{
+  "version": "1.0.0",
+  "policies": {
+    "foundation": {
+      "article_3": {
+        "enabled": true,
+        "enforcement": "strict",
+        "keywords": ["torture", "degrading", "inhuman"]
+      },
+      "article_8": {
+        "enabled": true,
+        "enforcement": "strict",
+        "pii_patterns": ["SSN", "NI", "passport", "medical"]
+      },
+      "housing_act": {
+        "enabled": true,
+        "section_202": true,
+        "review_triggers": ["eviction", "homeless", "accommodation"]
+      },
+      "no_ghosting": {
+        "enabled": true,
+        "audit_retention_days": 365,
+        "cryptographic_seal": true
+      }
+    },
+    "aspirational": {
+      "cultural_preservation": {
+        "enabled": true,
+        "nsibidi_validation": true,
+        "multi_sig_threshold": 3
+      }
+    }
+  },
+  "stakeholders": [
+    {
+      "name": "community_elder_1",
+      "pubkey": "ed25519:abcd1234..."
+    },
+    {
+      "name": "community_elder_2", 
+      "pubkey": "ed25519:efgh5678..."
+    },
+    {
+      "name": "legal_officer",
+      "pubkey": "ed25519:ijkl9012..."
+    }
+  ]
+}

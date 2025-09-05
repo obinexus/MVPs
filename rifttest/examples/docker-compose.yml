@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  riftsh:
+    image: obinexus/rift:latest
+    container_name: rift-shell
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./:/workspace
+      - rift-logs:/var/log/obinexus
+    environment:
+      - RIFT_STRICT_MODE=true
+    networks:
+      - rift-net
+
+  gossip-node-1:
+    image: obinexus/rift:latest
+    container_name: gossip-1
+    command: gosilang --port 31337 --daemon
+    ports:
+      - "31337:31337/udp"
+    networks:
+      - rift-net
+
+  gossip-node-2:
+    image: obinexus/rift:latest
+    container_name: gossip-2
+    command: gosilang --port 31337 --daemon --bootstrap gossip-node-1:31337
+    networks:
+      - rift-net
+    depends_on:
+      - gossip-node-1
+
+  compliance-monitor:
+    image: obinexus/rift:latest
+    container_name: compliance-monitor
+    command: /examples/monitor_compliance.sh
+    volumes:
+      - rift-logs:/var/log/obinexus:ro
+    networks:
+      - rift-net
+
+volumes:
+  rift-logs:
+
+networks:
+  rift-net:
+    driver: bridge
