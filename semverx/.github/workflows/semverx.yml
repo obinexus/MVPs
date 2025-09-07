@@ -1,0 +1,18 @@
+# .github/workflows/semverx.yml
+name: SemVerX CI
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build C library
+      run: make c
+    - name: Test Python
+      run: |
+        pip install pytest
+        make test-python
+    - name: Validate schemas
+      run: make validate
