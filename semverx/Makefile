@@ -1,108 +1,81 @@
-# SemVerX Build System
+# SemVerX Makefile - OBINexus Polyglot Build System
+# Part of the toolchain: riftlang.exe → .so.a → rift.exe → gosilang
+
 CC = gcc
-CFLAGS = -Wall -Wextra -O2 -std=c11 -I. -lm
-PYTHON = python3
-CARGO = cargo
+CFLAGS = -Wall -Wextra -O2 -fPIC -I.
+LDFLAGS = -shared
+AR = ar
+ARFLAGS = rcs
 
-# Directories
+# Output directories
 BUILD_DIR = build
-TEST_DIR = tests
-RUST_DIR = rust-semverx
+LIB_DIR = lib
+BIN_DIR = bin
 
-# C Sources
+# Source files
 C_SOURCES = semverx_parser.c
-C_OBJECTS = $(C_SOURCES:%.c=$(BUILD_DIR)/%.o)
-C_TARGET = $(BUILD_DIR)/libsemverx.a
+HEADERS = semver_parser.h
 
-# Python Sources
-PY_SOURCES = dag.py
+# Object files
+OBJECTS = $(patsubst %.c,$(BUILD_DIR)/%.o,$(C_SOURCES))
+
+# Targets
+STATIC_LIB = $(BUILD_DIR)/libsemverx.a
+SHARED_LIB = $(BUILD_DIR)/libsemverx.so
+EXECUTABLE = $(BIN_DIR)/semverx
 
 # Default target
-all: c python validate
+all: dirs $(STATIC_LIB) $(SHARED_LIB) $(EXECUTABLE)
 
-# Create build directory
-$(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
+# Create directories
+dirs:
+	@mkdir -p $(BUILD_DIR)
+	@mkdir -p $(LIB_DIR)
+	@mkdir -p $(BIN_DIR)
 
-# C Library
-c: $(BUILD_DIR) $(C_TARGET)
-
-$(C_TARGET): $(C_OBJECTS)
-	ar rcs $@ $^
-
-$(BUILD_DIR)/%.o: %.c semverx_parser.h
+# Compile C source files
+$(BUILD_DIR)/%.o: %.c $(HEADERS)
+	@echo "Compiling $<..."
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Python
-python:
-	$(PYTHON) -m py_compile $(PY_SOURCES)
+# Build static library
+$(STATIC_LIB): $(OBJECTS)
+	@echo "Creating static library..."
+	$(AR) $(ARFLAGS) $@ $^
 
-# Rust (if rust-semverx exists)
-rust:
-	@if [ -d "$(RUST_DIR)" ]; then \
-		cd $(RUST_DIR) && $(CARGO) build --release; \
-	fi
+# Build shared library
+$(SHARED_LIB): $(OBJECTS)
+	@echo "Creating shared library..."
+	$(CC) $(LDFLAGS) -o $@ $^
 
-# Validate JSON files
-validate:
-	@echo "Validating JSON schemas..."
-	@$(PYTHON) -m json.tool schema.json > /dev/null || echo "schema.json invalid"
-	@$(PYTHON) -m json.tool hot_swappable.json > /dev/null || echo "hot_swappable.json invalid"
+# Build executable (if you have a main.c)
+$(EXECUTABLE): $(OBJECTS)
+	@echo "Building executable..."
+	$(CC) $(CFLAGS) -o $@ $^ -lm
 
-# Tests
-test: test-c test-python
-
-test-c: c
-	@echo "Running C tests..."
-	@if [ -f "$(TEST_DIR)/test_semverx.c" ]; then \
-		$(CC) $(CFLAGS) $(TEST_DIR)/test_semverx.c $(C_TARGET) -o $(BUILD_DIR)/test_semverx && \
-		$(BUILD_DIR)/test_semverx; \
-	fi
-
-test-python:
-	@echo "Running Python tests..."
-	$(PYTHON) -m pytest tests/ -v || $(PYTHON) -m unittest discover -s tests
-
-# Documentation
-docs:
-	doxygen Doxyfile || echo "Doxygen not found"
-	$(PYTHON) -m pydoc -w dag
-
-# Installation
-install: all
-	install -d /usr/local/lib /usr/local/include/semverx
-	install -m 644 $(C_TARGET) /usr/local/lib/
-	install -m 644 semverx_parser.h /usr/local/include/semverx/
-	install -m 755 dag.py /usr/local/bin/semverx-dag
-
-# Clean
+# Clean build artifacts
 clean:
-	rm -rf $(BUILD_DIR) __pycache__ *.pyc
-	@if [ -d "$(RUST_DIR)" ]; then \
-		cd $(RUST_DIR) && $(CARGO) clean; \
-	fi
+	rm -rf $(BUILD_DIR) $(LIB_DIR) $(BIN_DIR)
 
-# Development helpers
-format:
-	clang-format -i *.c *.h
-	black *.py
+# Install libraries
+install: all
+	@echo "Installing libraries..."
+	@mkdir -p /usr/local/lib
+	@mkdir -p /usr/local/include
+	cp $(STATIC_LIB) /usr/local/lib/
+	cp $(SHARED_LIB) /usr/local/lib/
+	cp $(HEADERS) /usr/local/include/
+	ldconfig
 
-lint:
-	cppcheck --enable=all *.c
-	pylint *.py
+# Run tests
+test: all
+	@echo "Running tests..."
+	python3 tests/test_dag.py
+	./tests/test_parser
 
-# Git helpers
-push-mvps:
-	git add .
-	git commit -m "SemVerX: DAG resolver + NLM integration"
-	git push origin main
+# Generate FFI bindings
+ffi: all
+	@echo "Generating FFI bindings..."
+	python3 scripts/generate_bindings.py
 
-push-rust:
-	@if [ -d "../rust-semverx" ]; then \
-		cd ../rust-semverx && \
-		git add . && \
-		git commit -m "SemVerX: Rust implementation update" && \
-		git push origin main; \
-	fi
-
-.PHONY: all c python rust validate test test-c test-python docs install clean format lint push-mvps push-rust
+.PHONY: all dirs clean install test ffi
