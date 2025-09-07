@@ -1,0 +1,27 @@
+hot_swap_policy:
+  pre_checks:
+    - nlm_distance_threshold: 0.5  # Max allowed for auto-swap
+    - compatibility_score_min: 0.8
+    - no_experimental_to_production: true
+    
+  stages:
+    canary:
+      duration: 300s
+      traffic: 1%
+      rollback_on:
+        - error_rate > 0.05
+        - latency_p99 > 2x_baseline
+    
+    shadow:
+      duration: 600s
+      mode: read_only_parallel
+      validation: output_comparison
+    
+    ramp:
+      stages: [5%, 25%, 50%, 100%]
+      duration_per_stage: 300s
+    
+  rollback:
+    cache_previous_path: true
+    atomic_switch: true
+    preserve_state: true
