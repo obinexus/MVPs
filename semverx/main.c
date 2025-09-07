@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "semver_parser.h"
+#include "semverx_parser.h"
 
 // Simple CLI for SemVerX parser
 int main(int argc, char *argv[]) {
