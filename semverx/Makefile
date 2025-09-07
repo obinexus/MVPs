@@ -66,9 +66,10 @@ $(SHARED_LIB): $(OBJECTS)
 	@cp $@ $(LIB_DIR)/ 2>/dev/null || true
 
 # Build executable (if main.c exists)
+# In the Makefile, update the executable build line:
 $(EXECUTABLE): $(MAIN_OBJ) $(STATIC_LIB)
 	@echo "Building executable..."
-	$(CC) $(CFLAGS) -o $@ $(MAIN_OBJ) -L$(BUILD_DIR) -lsemverx -lm
+	$(CC) $(CFLAGS) -o $@ $(MAIN_OBJ) -L$(BUILD_DIR) -lsemverx -lm -Wl,-rpath,'$$ORIGIN/../lib'
 
 # Clean build artifacts
 clean:
