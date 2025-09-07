@@ -1,7 +1,9 @@
+# In tests/test_dag.py, add at the top:
 import sys
-sys.path.append('..')
-from dag import SemVerXResolver, SemVerXNode
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from dag import SemVerXResolver, SemVerXNode
 def test_nlm_computation():
     resolver = SemVerXResolver()
     coords = resolver.compute_nlm_coordinates(
